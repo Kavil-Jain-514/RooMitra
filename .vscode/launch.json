@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-RoomitraApplication<roomitra>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "dev.kavil.roomitra.RoomitraApplication",
+            "projectName": "roomitra",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
