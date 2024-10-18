@@ -4,7 +4,9 @@ DBDiagram.io link - https://dbdiagram.io/d/RooMitra-6703766ffb079c7ebd8b55a7
 ![RooMitra_Schema](RooMitra.svg)
 
 Database - RooMitra-db
+
 Collections
+
 ActivityLog: Tracks user activities like matches, messages, profile updates, and feedback. This helps keep track of important events for users.
 
 BookingRequests: Manages requests made by room seekers for a specific room. It allows providers to accept or reject booking requests.
