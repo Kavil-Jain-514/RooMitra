@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import api from '../api/axiosConfig';
+import React, { useState } from "react";
+import api from "../api/axiosConfig";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    password: ''
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -18,22 +18,26 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/api/v1/users/register', formData);
-      console.log('Registration successful:', response.data);
+      const response = await api.post("/api/v1/users/register", formData);
+      console.log("Registration successful:", response.data);
       // Redirect or show success message here
     } catch (err) {
-      console.error('Registration error:', err);
+      console.error("Registration error:", err);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-teal-400 to-blue-500">
       <div className="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Register</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          Register
+        </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="flex space-x-4">
             <div className="w-1/2">
-              <label className="block text-sm font-medium text-gray-600">First Name</label>
+              <label className="block text-sm font-medium text-gray-600">
+                First Name
+              </label>
               <input
                 type="text"
                 name="firstName"
@@ -45,7 +49,9 @@ const Register = () => {
               />
             </div>
             <div className="w-1/2">
-              <label className="block text-sm font-medium text-gray-600">Last Name</label>
+              <label className="block text-sm font-medium text-gray-600">
+                Last Name
+              </label>
               <input
                 type="text"
                 name="lastName"
@@ -58,7 +64,9 @@ const Register = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600">Username</label>
+            <label className="block text-sm font-medium text-gray-600">
+              Username
+            </label>
             <input
               type="text"
               name="username"
@@ -70,7 +78,9 @@ const Register = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600">Email</label>
+            <label className="block text-sm font-medium text-gray-600">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -82,7 +92,9 @@ const Register = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600">Password</label>
+            <label className="block text-sm font-medium text-gray-600">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -93,13 +105,19 @@ const Register = () => {
               className="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
-          <button type="submit" className="w-full py-3 mt-6 text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none">
+          <button
+            type="submit"
+            className="w-full py-3 mt-6 text-white bg-teal-600 rounded-md hover:bg-teal-700 focus:outline-none"
+          >
             Register
           </button>
         </form>
         <div className="text-center">
           <p className="text-sm text-gray-500">
-            Already have an account? <a href="/login" className="text-teal-600 hover:underline">Login here</a>
+            Already have an account?{" "}
+            <a href="/login" className="text-teal-600 hover:underline">
+              Login here
+            </a>
           </p>
         </div>
       </div>
