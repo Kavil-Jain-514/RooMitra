@@ -6,14 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.kavil.roomitra.model.User;
-import dev.kavil.roomitra.repositories.UserRepository;
+import dev.kavil.roomitra.models.User;
+import dev.kavil.roomitra.repository.UserRepository;
 import dev.kavil.roomitra.utils.PasswordUtil;
 
 @Service
 public class UserService {
 
-     @Autowired
+    @Autowired
     private UserRepository userRepository;
 
     public List<User> getAllUsers() {
