@@ -9,4 +9,5 @@ import dev.kavil.roomitra.models.RoomProviders;
 @Repository
 public interface RoomProvidersRepository extends MongoRepository<RoomProviders, ObjectId> {
     // Custom query methods can be defined here if needed
+    RoomProviders findByEmail(String email);
 }

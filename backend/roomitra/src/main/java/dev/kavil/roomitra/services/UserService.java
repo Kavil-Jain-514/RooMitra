@@ -1,44 +1,53 @@
 package dev.kavil.roomitra.services;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import dev.kavil.roomitra.models.User;
-import dev.kavil.roomitra.repository.UserRepository;
-import dev.kavil.roomitra.utils.PasswordUtil;
+import dev.kavil.roomitra.models.RoomProviders;
+import dev.kavil.roomitra.models.RoomSeekers;
+import dev.kavil.roomitra.repository.RoomSeekersRepository;
+import dev.kavil.roomitra.repository.RoomProvidersRepository;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private RoomSeekersRepository roomSeekersRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @Autowired
+    private RoomProvidersRepository roomProvidersRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    // Register a RoomSeekers
+    public RoomSeekers registerRoomSeeker(RoomSeekers seeker) {
+        seeker.setPassword(passwordEncoder.encode(seeker.getPassword()));
+        return roomSeekersRepository.save(seeker);
     }
 
-    public User registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("User with this email already exists.");
-        }
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new RuntimeException("User with this username already exists.");
-        }
-        // Hash the password before saving
-        user.setPassword(PasswordUtil.hashPassword(user.getPassword()));
-        return userRepository.save(user);
+    // Register a RoomProviders
+    public RoomProviders registerRoomProvider(RoomProviders provider) {
+        provider.setPassword(passwordEncoder.encode(provider.getPassword()));
+        return roomProvidersRepository.save(provider);
     }
 
-    public User loginUser(String username, String password) {
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isPresent() && PasswordUtil.verifyPassword(password, user.get().getPassword())) {
-            return user.get();
-        } else {
-            throw new RuntimeException("Invalid username or password.");
+    // Authenticate RoomSeekers
+    public RoomSeekers authenticateRoomSeeker(String email, String password) {
+        RoomSeekers seeker = roomSeekersRepository.findByEmail(email);
+        if (seeker != null && passwordEncoder.matches(password, seeker.getPassword())) {
+            return seeker;
         }
+        return null;
+    }
+
+    // Authenticate RoomProviders
+    public RoomProviders authenticateRoomProvider(String email, String password) {
+        RoomProviders provider = roomProvidersRepository.findByEmail(email);
+        if (provider != null && passwordEncoder.matches(password, provider.getPassword())) {
+            return provider;
+        }
+        return null;
     }
 
 }
