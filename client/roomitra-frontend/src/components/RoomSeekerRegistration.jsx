@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../api/axiosConfig";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,8 @@ const RoomSeekerRegistration = () => {
   const [nationalities, setNationalities] = useState([]);
   const [occupations, setOccupations] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const userType = location.state?.userType || "RoomSeeker";
 
   useEffect(() => {
     // Fetch nationalities and occupations from the backend
@@ -37,10 +39,19 @@ const RoomSeekerRegistration = () => {
   }, []);
 
   const onSubmit = (data) => {
+    // Set the userType based on the selected option
+    data.userType = userType === "roomSeeker" ? "RoomSeeker" : "RoomProvider";
     console.log("Submitting form data:", data);
+
+    // Determine the API endpoint based on userType
+    const apiEndpoint =
+      userType === "roomSeeker"
+        ? "users/register/seeker"
+        : "users/register/provider";
+
     // Submit the form data to the backend
     api
-      .post("users/register/seeker", data)
+      .post(apiEndpoint, data)
       .then((response) => {
         console.log("User registered:", response.data);
         toast.success("Registration successful!");
@@ -59,7 +70,9 @@ const RoomSeekerRegistration = () => {
       <ToastContainer />
       <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
         <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">
-          RoomSeeker Registration
+          {userType === "RoomSeeker"
+            ? "RoomSeeker Registration"
+            : "RoomProvider Registration"}
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
@@ -207,6 +220,7 @@ const RoomSeekerRegistration = () => {
               Register
             </button>
           </div>
+          <input type="hidden" value={userType} {...register("userType")} />
         </form>
       </div>
     </div>

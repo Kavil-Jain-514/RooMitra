@@ -30,8 +30,8 @@ public class RoomProviders {
     }
 
     private Gender gender;
-    private ObjectId nationalityId;
-    private ObjectId occupationId;
+    private String nationalityId;
+    private String occupationId;
     private String phoneNumber;
 
     public enum UserType {

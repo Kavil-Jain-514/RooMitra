@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Occupations {
     @Id
-    private String id; // Occupation ID
+    private String _id; // Occupation ID
     @Field("occupation_name")
     private String occupationName; // Name of the occupation
 }

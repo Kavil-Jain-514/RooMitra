@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import logo from "../assets/RooMitra-logo.svg";
@@ -8,6 +9,7 @@ import furnitureTradingPhoto from "../assets/Furniture_trading.png";
 import communityBuildingPhoto from "../assets/Community_Building.png";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [animateLogo, setAnimateLogo] = useState(true);
   const [displayIndex, setDisplayIndex] = useState(0); // Track index for typewriter effect
   const [showTagline, setShowTagline] = useState(true);
@@ -41,13 +43,7 @@ const LandingPage = () => {
   }, [displayIndex, fullTagline.length]);
 
   const handleSelection = (type) => {
-    if (type === "seeker") {
-      // Redirect to room seeker login/signup page
-      window.location.href = "/roomSeekerSignup";
-    } else {
-      // Redirect to room provider login/signup page
-      window.location.href = "/roomProviderSignup";
-    }
+    navigate("/userSignup", { state: { userType: type } });
   };
 
   return (
@@ -80,13 +76,13 @@ const LandingPage = () => {
               </p>
               <div className="flex justify-center space-x-6">
                 <button
-                  onClick={() => handleSelection("seeker")}
+                  onClick={() => handleSelection("RoomSeeker")}
                   className="bg-blue-600 text-white px-8 py-4 rounded shadow-lg hover:bg-blue-700 transition duration-300"
                 >
                   🏠 I’m looking for a room to rent!
                 </button>
                 <button
-                  onClick={() => handleSelection("provider")}
+                  onClick={() => handleSelection("RoomProvider")}
                   className="bg-green-600 text-white px-8 py-4 rounded shadow-lg hover:bg-green-700 transition duration-300"
                 >
                   🛋️ I have a room and need a roommate!
