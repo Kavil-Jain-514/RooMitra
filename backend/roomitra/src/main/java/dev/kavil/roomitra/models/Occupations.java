@@ -1,8 +1,8 @@
 package dev.kavil.roomitra.models;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Occupations {
     @Id
-    private ObjectId id; // Occupation ID
-
+    private String id; // Occupation ID
+    @Field("occupation_name")
     private String occupationName; // Name of the occupation
 }
