@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
 
-const RoomSeekerRegistration = () => {
+const RegistrationPage = () => {
   const {
     register,
     handleSubmit,
@@ -227,4 +227,4 @@ const RoomSeekerRegistration = () => {
   );
 };
 
-export default RoomSeekerRegistration;
+export default RegistrationPage;
