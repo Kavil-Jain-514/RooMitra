@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaUserCircle } from "react-icons/fa";
+import { FaSearch, FaUserCircle, FaBell, FaSignOutAlt } from "react-icons/fa";
 import RoomCard from "../components/RoomCard";
 import api from "../api/axiosConfig";
 
@@ -27,7 +27,7 @@ const Dashboard = () => {
 
   const filteredProviders = roomProviders.filter((provider) => {
     return (
-      provider.location.toLowerCase().includes(search.toLowerCase()) &&
+      provider.location?.toLowerCase().includes(search.toLowerCase()) &&
       (!filters.price || provider.price <= filters.price) &&
       (!filters.location || provider.location === filters.location) &&
       (!filters.beds || provider.beds === filters.beds) &&
@@ -37,86 +37,80 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="dashboard-container">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="dashboard-header flex justify-between items-center p-4 bg-blue-500 text-white">
-        <div className="search-container flex items-center">
-          <FaSearch className="mr-2" />
-          <input
-            type="text"
-            placeholder="Search by location"
-            value={search}
-            onChange={handleSearch}
-            className="p-2 rounded"
-          />
+      <header className="bg-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center flex-1">
+              <h1 className="text-2xl font-bold text-gray-900">RooMitra</h1>
+              <div className="ml-8 flex-1 max-w-lg">
+                <div className="relative">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by location..."
+                    value={search}
+                    onChange={handleSearch}
+                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button className="p-2 rounded-full hover:bg-gray-100">
+                <FaBell className="text-gray-600 text-xl" />
+              </button>
+              <div className="flex items-center space-x-2">
+                <FaUserCircle className="text-gray-600 text-2xl" />
+                <button className="p-2 rounded-full hover:bg-gray-100">
+                  <FaSignOutAlt className="text-gray-600 text-xl" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <FaUserCircle size={30} className="cursor-pointer" />
       </header>
 
-      {/* Filter Section */}
-      <div className="filter-section p-4 bg-gray-100 flex justify-center space-x-4">
-        <select
-          name="price"
-          value={filters.price}
-          onChange={handleFilterChange}
-          className="p-2 rounded"
-        >
-          <option value="">Price</option>
-          <option value="500">Under $500</option>
-          <option value="1000">Under $1000</option>
-          <option value="1500">Under $1500</option>
-        </select>
-        <select
-          name="location"
-          value={filters.location}
-          onChange={handleFilterChange}
-          className="p-2 rounded"
-        >
-          <option value="">Location</option>
-          <option value="City A">City A</option>
-          <option value="City B">City B</option>
-          <option value="City C">City C</option>
-        </select>
-        <select
-          name="beds"
-          value={filters.beds}
-          onChange={handleFilterChange}
-          className="p-2 rounded"
-        >
-          <option value="">Beds</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3+</option>
-        </select>
-        <select
-          name="baths"
-          value={filters.baths}
-          onChange={handleFilterChange}
-          className="p-2 rounded"
-        >
-          <option value="">Baths</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3+</option>
-        </select>
-        <select
-          name="roomType"
-          value={filters.roomType}
-          onChange={handleFilterChange}
-          className="p-2 rounded"
-        >
-          <option value="">Room Type</option>
-          <option value="shared">Shared</option>
-          <option value="personal">Personal</option>
-        </select>
+      {/* Filters */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {Object.entries({
+              price: ["Price Range", ["500", "1000", "1500"]],
+              location: ["Location", ["City A", "City B", "City C"]],
+              beds: ["Bedrooms", ["1", "2", "3+"]],
+              baths: ["Bathrooms", ["1", "2", "3+"]],
+              roomType: ["Room Type", ["shared", "personal"]],
+            }).map(([key, [label, options]]) => (
+              <div key={key}>
+                <select
+                  name={key}
+                  value={filters[key]}
+                  onChange={handleFilterChange}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">{label}</option>
+                  {options.map((option) => (
+                    <option key={option} value={option}>
+                      {key === "price" ? `Under $${option}` : option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Room Cards Section */}
-      <main className="room-cards-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-        {filteredProviders.map((provider) => (
-          <RoomCard key={provider.id} provider={provider} />
-        ))}
-      </main>
+      {/* Room Cards Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProviders.map((provider) => (
+            <RoomCard key={provider.id} provider={provider} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
