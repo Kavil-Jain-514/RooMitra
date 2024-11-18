@@ -6,6 +6,8 @@ import DashboardPage from "./pages/DashboardPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import SeekerProfileSetup from "./pages/SeekerProfileSetup";
 import ProviderProfileSetup from "./pages/ProviderProfileSetup";
+import LoginPage from "./pages/LoginPage";
+import UserTypeSelection from "./components/UserTypeSelection";
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/user-type-selection" element={<UserTypeSelection />} />
         </Routes>
       </div>
     </Router>

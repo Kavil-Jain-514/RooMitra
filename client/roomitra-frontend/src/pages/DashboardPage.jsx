@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaUserCircle, FaBell, FaSignOutAlt } from "react-icons/fa";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import RoomCard from "../components/RoomCard";
 import api from "../api/axiosConfig";
 
@@ -37,40 +38,8 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center flex-1">
-              <h1 className="text-2xl font-bold text-gray-900">RooMitra</h1>
-              <div className="ml-8 flex-1 max-w-lg">
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by location..."
-                    value={search}
-                    onChange={handleSearch}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-full hover:bg-gray-100">
-                <FaBell className="text-gray-600 text-xl" />
-              </button>
-              <div className="flex items-center space-x-2">
-                <FaUserCircle className="text-gray-600 text-2xl" />
-                <button className="p-2 rounded-full hover:bg-gray-100">
-                  <FaSignOutAlt className="text-gray-600 text-xl" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Header isDashboard={true} />
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -104,13 +73,15 @@ const Dashboard = () => {
       </div>
 
       {/* Room Cards Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProviders.map((provider) => (
             <RoomCard key={provider.id} provider={provider} />
           ))}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };

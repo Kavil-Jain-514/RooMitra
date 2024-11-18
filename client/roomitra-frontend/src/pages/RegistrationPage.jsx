@@ -10,59 +10,70 @@ const RegistrationPage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm();
   const [nationalities, setNationalities] = useState([]);
   const [occupations, setOccupations] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const userType = location.state?.userType || "RoomSeeker";
 
   useEffect(() => {
-    // Fetch nationalities and occupations from the backend
-    api
-      .get("nationalities")
-      .then((response) => {
-        setNationalities(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching nationalities:", error);
-      });
+    const fetchData = async () => {
+      try {
+        const [nationalitiesRes, occupationsRes] = await Promise.all([
+          api.get("nationalities"),
+          api.get("occupations"),
+        ]);
+        setNationalities(nationalitiesRes.data);
+        setOccupations(occupationsRes.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Failed to load form data");
+      }
+    };
 
-    api
-      .get("occupations")
-      .then((response) => {
-        setOccupations(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching occupations:", error);
-      });
+    fetchData();
   }, []);
 
-  const onSubmit = (data) => {
-    // Set the userType based on the selected option
-    data.userType = userType === "roomSeeker" ? "RoomSeeker" : "RoomProvider";
-    console.log("Submitting form data:", data);
+  const onSubmit = async (data) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    // Determine the API endpoint based on userType
-    const apiEndpoint =
-      userType === "roomSeeker"
-        ? "users/register/seeker"
-        : "users/register/provider";
+    try {
+      const endpoint =
+        userType === "RoomSeeker"
+          ? "/users/register/seeker"
+          : "/users/register/provider";
 
-    // Submit the form data to the backend
-    api
-      .post(apiEndpoint, data)
-      .then((response) => {
-        console.log("User registered:", response.data);
+      const registrationData = {
+        ...data,
+        dateOfBirth: new Date(data.dateOfBirth).toISOString(),
+        userType: userType,
+      };
+
+      const response = await api.post(endpoint, registrationData);
+
+      if (response.status === 200) {
         toast.success("Registration successful!");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      })
-      .catch((error) => {
-        console.error("Error during registration:", error);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+
+      if (error.response?.data?.message === "Email already exists") {
+        setError("email", {
+          type: "manual",
+          message: "This email is already registered",
+        });
+      } else {
         toast.error("Registration failed. Please try again.");
-      });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -215,9 +226,12 @@ const RegistrationPage = () => {
           <div className="text-center">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-blue-700 transition duration-300"
+              disabled={isSubmitting}
+              className={`w-full ${
+                isSubmitting ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+              } text-white py-2 px-4 rounded-md shadow-md transition duration-300`}
             >
-              Register
+              {isSubmitting ? "Registering..." : "Register"}
             </button>
           </div>
           <input type="hidden" value={userType} {...register("userType")} />

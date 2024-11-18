@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import api from "../api/axiosConfig";
 import { toast } from "react-toastify";
@@ -14,7 +14,6 @@ const SeekerProfileSetup = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [preferenceQuestions, setPreferenceQuestions] = useState([]);
   const navigate = useNavigate();
-  const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {

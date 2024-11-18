@@ -9,6 +9,9 @@ import dev.kavil.roomitra.models.RoomSeekers;
 import dev.kavil.roomitra.repository.RoomSeekersRepository;
 import dev.kavil.roomitra.repository.RoomProvidersRepository;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class UserService {
 
@@ -20,15 +23,30 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    private Set<String> invalidatedTokens = new HashSet<>();
+
+    // Email validation helper
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+
+    // Check if email already exists
+    private boolean isEmailTaken(String email) {
+        return roomSeekersRepository.findByEmail(email) != null ||
+                roomProvidersRepository.findByEmail(email) != null;
+    }
+
     // Register a RoomSeekers
     public RoomSeekers registerRoomSeeker(RoomSeekers seeker) {
         seeker.setPassword(passwordEncoder.encode(seeker.getPassword()));
+        seeker.setUserType(RoomSeekers.UserType.RoomSeeker);
         return roomSeekersRepository.save(seeker);
     }
 
     // Register a RoomProviders
     public RoomProviders registerRoomProvider(RoomProviders provider) {
         provider.setPassword(passwordEncoder.encode(provider.getPassword()));
+        provider.setUserType(RoomProviders.UserType.RoomProvider);
         return roomProvidersRepository.save(provider);
     }
 
@@ -47,6 +65,30 @@ public class UserService {
         if (provider != null && passwordEncoder.matches(password, provider.getPassword())) {
             return provider;
         }
+        return null;
+    }
+
+    public void invalidateToken(String token) {
+        invalidatedTokens.add(token);
+    }
+
+    public boolean isTokenInvalid(String token) {
+        return invalidatedTokens.contains(token);
+    }
+
+    public Object authenticateUser(String email, String password) {
+        // Try authenticating as RoomSeeker
+        RoomSeekers seeker = authenticateRoomSeeker(email, password);
+        if (seeker != null) {
+            return seeker;
+        }
+
+        // Try authenticating as RoomProvider
+        RoomProviders provider = authenticateRoomProvider(email, password);
+        if (provider != null) {
+            return provider;
+        }
+
         return null;
     }
 
