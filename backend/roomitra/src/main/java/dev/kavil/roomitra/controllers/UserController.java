@@ -7,22 +7,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import java.net.MalformedURLException;
 
 import dev.kavil.roomitra.models.RoomProviders;
 import dev.kavil.roomitra.models.RoomSeekers;
 import dev.kavil.roomitra.services.UserService;
-import dev.kavil.roomitra.utils.JWTUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private JWTUtil jwtUtil;
 
     // Register RoomSeeker
     @PostMapping("/register/seeker")
@@ -41,11 +55,7 @@ public class UserController {
     public ResponseEntity<?> loginRoomSeeker(@RequestBody Map<String, String> credentials) {
         RoomSeekers seeker = userService.authenticateRoomSeeker(credentials.get("email"), credentials.get("password"));
         if (seeker != null) {
-            String token = jwtUtil.generateToken(credentials.get("email"));
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", seeker);
-            response.put("token", token);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(seeker);
         }
         return ResponseEntity.status(401).body("Invalid email or password");
     }
@@ -56,11 +66,7 @@ public class UserController {
         RoomProviders provider = userService.authenticateRoomProvider(credentials.get("email"),
                 credentials.get("password"));
         if (provider != null) {
-            String token = jwtUtil.generateToken(credentials.get("email"));
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", provider);
-            response.put("token", token);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(provider);
         }
         return ResponseEntity.status(401).body("Invalid email or password");
     }
@@ -79,6 +85,125 @@ public class UserController {
         }
 
         return ResponseEntity.badRequest().body("No authentication token found");
+    }
+
+    @GetMapping("/details/{userType}/{userId}")
+    public ResponseEntity<?> getUserDetails(@PathVariable String userType, @PathVariable String userId) {
+        try {
+            if ("roomseeker".equalsIgnoreCase(userType)) {
+                return ResponseEntity.ok(userService.getRoomSeekerDetails(userId));
+            } else if ("roomprovider".equalsIgnoreCase(userType)) {
+                return ResponseEntity.ok(userService.getRoomProviderDetails(userId));
+            }
+            return ResponseEntity.badRequest().body("Invalid user type");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching user details");
+        }
+    }
+
+    @PatchMapping("/update-bio/{userType}/{userId}")
+    public ResponseEntity<?> updateUserBio(
+            @PathVariable String userType,
+            @PathVariable String userId,
+            @RequestBody Map<String, String> bioData) {
+        try {
+            String bio = bioData.get("bio");
+            if ("roomseeker".equalsIgnoreCase(userType)) {
+                return ResponseEntity.ok(userService.updateRoomSeekerBio(userId, bio));
+            } else if ("roomprovider".equalsIgnoreCase(userType)) {
+                return ResponseEntity.ok(userService.updateRoomProviderBio(userId, bio));
+            }
+            return ResponseEntity.badRequest().body("Invalid user type");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error updating bio");
+        }
+    }
+
+    @GetMapping("/name/{userType}/{userId}")
+    public ResponseEntity<?> getUserName(@PathVariable String userType, @PathVariable String userId) {
+        try {
+            if ("roomseeker".equalsIgnoreCase(userType)) {
+                return ResponseEntity.ok(userService.getRoomSeekerName(userId));
+            } else if ("roomprovider".equalsIgnoreCase(userType)) {
+                return ResponseEntity.ok(userService.getRoomProviderName(userId));
+            }
+            return ResponseEntity.badRequest().body("Invalid user type");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching user name");
+        }
+    }
+
+    @GetMapping("/seekers")
+    public ResponseEntity<?> getAllRoomSeekers() {
+        try {
+            List<RoomSeekers> seekers = userService.getAllRoomSeekers();
+            return ResponseEntity.ok(seekers);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching room seekers");
+        }
+    }
+
+    @GetMapping("/providers")
+    public ResponseEntity<?> getAllRoomProviders() {
+        try {
+            List<RoomProviders> providers = userService.getAllRoomProviders();
+            return ResponseEntity.ok(providers);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching room providers");
+        }
+    }
+
+    @PostMapping(value = "/upload-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadProfilePhoto(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam("email") String email) {
+        try {
+            // Create directory if it doesn't exist
+            String uploadDir = System.getProperty("user.dir") + "/uploads/profile-photos";
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Generate unique filename
+            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = uploadPath.resolve(filename);
+
+            // Save the file
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Create URL for the saved file
+            String fileUrl = "/uploads/profile-photos/" + filename;
+
+            // Update user's profile photo in database
+            userService.updateProfilePhoto(email, fileUrl);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("photoUrl", fileUrl);
+
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to upload photo: " + e.getMessage());
+        }
+    }
+
+    // Add a GET endpoint to serve files
+    @GetMapping("/uploads/profile-photos/{filename:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get(System.getProperty("user.dir") + "/uploads/profile-photos/" + filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

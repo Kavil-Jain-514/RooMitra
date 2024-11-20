@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomSeekers {
     @Id
-    private ObjectId id;
+    private String _id;
     private String firstName;
     private String lastName;
     private String email;
@@ -49,4 +49,5 @@ public class RoomSeekers {
     private Date updatedAt;
     private String profilePhoto;
     private double rating;
+    private String bio;
 }

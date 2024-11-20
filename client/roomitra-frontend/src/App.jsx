@@ -8,6 +8,7 @@ import SeekerProfileSetup from "./pages/SeekerProfileSetup";
 import ProviderProfileSetup from "./pages/ProviderProfileSetup";
 import LoginPage from "./pages/LoginPage";
 import UserTypeSelection from "./components/UserTypeSelection";
+import UserDetailsPage from "./pages/UserDetailsPage";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/user-type-selection" element={<UserTypeSelection />} />
+          <Route path="/user-details" element={<UserDetailsPage />} />
         </Routes>
       </div>
     </Router>

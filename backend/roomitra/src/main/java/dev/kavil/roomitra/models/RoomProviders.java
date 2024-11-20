@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomProviders {
     @Id
-    private ObjectId id;
+    private String _id;
     private String firstName;
     private String lastName;
     private String email;
@@ -50,4 +50,5 @@ public class RoomProviders {
     private String profilePhoto;
     private double rating;
     private boolean isVerified;
+    private String bio;
 }

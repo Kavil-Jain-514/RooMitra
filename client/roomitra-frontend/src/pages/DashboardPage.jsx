@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     api
-      .get("/roomProviders")
+      .get("/users/providers")
       .then((response) => setRoomProviders(response.data))
       .catch((error) => console.error("Error fetching room providers:", error));
   }, []);

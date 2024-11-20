@@ -8,10 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
-        registry.addMapping("/**")  // Apply to all endpoints
+        registry.addMapping("/**") // Apply to all endpoints
                 .allowedOrigins("http://localhost:3000") // Your React app's origin
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*") // Allow all headers
-                .allowCredentials(true); // Allow credentials if needed
+                .exposedHeaders("Authorization")
+                .allowCredentials(true) // Allow credentials if needed
+                .maxAge(3600); // Cache preflight requests for 1 hour
     }
 }

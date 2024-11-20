@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/RooMitra-logo.svg";
 import { FaBell, FaUserCircle, FaSignOutAlt, FaSearch } from "react-icons/fa";
 import api from "../api/axiosConfig";
@@ -57,7 +57,9 @@ const Header = ({ isDashboard = false }) => {
                 <FaBell className="text-gray-600 text-xl" />
               </button>
               <div className="flex items-center space-x-2">
-                <FaUserCircle className="text-gray-600 text-2xl" />
+                <Link to="/user-details">
+                  <FaUserCircle className="text-gray-600 text-2xl cursor-pointer hover:text-blue-600" />
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="p-2 rounded-full hover:bg-gray-100"

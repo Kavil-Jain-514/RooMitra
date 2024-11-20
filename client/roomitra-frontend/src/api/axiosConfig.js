@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const baseURL = "http://localhost:8080/api/v1";
+
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api/v1/', // Your API base URL
+    baseURL: baseURL,
 });
 
 // Add request interceptor to include token
@@ -17,5 +19,10 @@ api.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+export const getFullImageUrl = (path) => {
+    if (!path) return null;
+    return `http://localhost:8080${path}`;
+};
 
 export default api;

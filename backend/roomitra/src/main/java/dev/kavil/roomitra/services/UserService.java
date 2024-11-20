@@ -3,6 +3,7 @@ package dev.kavil.roomitra.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.bson.types.ObjectId;
 
 import dev.kavil.roomitra.models.RoomProviders;
 import dev.kavil.roomitra.models.RoomSeekers;
@@ -11,6 +12,9 @@ import dev.kavil.roomitra.repository.RoomProvidersRepository;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -90,6 +94,67 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public RoomSeekers getRoomSeekerDetails(String userId) {
+        return roomSeekersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public RoomProviders getRoomProviderDetails(String userId) {
+        return roomProvidersRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public RoomSeekers updateRoomSeekerBio(String userId, String bio) {
+        RoomSeekers seeker = getRoomSeekerDetails(userId);
+        seeker.setBio(bio);
+        return roomSeekersRepository.save(seeker);
+    }
+
+    public RoomProviders updateRoomProviderBio(String userId, String bio) {
+        RoomProviders provider = getRoomProviderDetails(userId);
+        provider.setBio(bio);
+        return roomProvidersRepository.save(provider);
+    }
+
+    public Map<String, String> getRoomSeekerName(String userId) {
+        RoomSeekers seeker = getRoomSeekerDetails(userId);
+        Map<String, String> nameMap = new HashMap<>();
+        nameMap.put("firstName", seeker.getFirstName());
+        nameMap.put("lastName", seeker.getLastName());
+        return nameMap;
+    }
+
+    public Map<String, String> getRoomProviderName(String userId) {
+        RoomProviders provider = getRoomProviderDetails(userId);
+        Map<String, String> nameMap = new HashMap<>();
+        nameMap.put("firstName", provider.getFirstName());
+        nameMap.put("lastName", provider.getLastName());
+        return nameMap;
+    }
+
+    public List<RoomSeekers> getAllRoomSeekers() {
+        return roomSeekersRepository.findAll();
+    }
+
+    public List<RoomProviders> getAllRoomProviders() {
+        return roomProvidersRepository.findAll();
+    }
+
+    public void updateProfilePhoto(String email, String photoUrl) {
+        RoomSeekers seeker = roomSeekersRepository.findByEmail(email);
+        if (seeker != null) {
+            seeker.setProfilePhoto(photoUrl);
+            roomSeekersRepository.save(seeker);
+            return;
+        }
+
+        RoomProviders provider = roomProvidersRepository.findByEmail(email);
+        if (provider != null) {
+            provider.setProfilePhoto(photoUrl);
+            roomProvidersRepository.save(provider);
+        }
     }
 
 }
