@@ -24,9 +24,10 @@ const UserDetailsPage = () => {
   const fetchUserDetails = async () => {
     try {
       const userData = JSON.parse(localStorage.getItem("user"));
-      const userType = userData.user.userType.toLowerCase();
+      console.log(userData);
+      const userType = userData.userType.toLowerCase();
       const response = await api.get(
-        `/users/details/${userType}/${userData.user._id}`
+        `/users/details/${userType}/${userData._id}`
       );
       setUser(response.data);
       setEditedBio(response.data.bio || "");
@@ -62,8 +63,8 @@ const UserDetailsPage = () => {
   const handleBioSave = async () => {
     try {
       const userData = JSON.parse(localStorage.getItem("user"));
-      const userType = userData.user.userType.toLowerCase();
-      await api.patch(`/users/update-bio/${userType}/${userData.user._id}`, {
+      const userType = userData.userType.toLowerCase();
+      await api.patch(`/users/update-bio/${userType}/${userData._id}`, {
         bio: editedBio,
       });
       setUser({ ...user, bio: editedBio });
@@ -79,6 +80,26 @@ const UserDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-3xl mx-auto mb-4">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center text-blue-600 hover:text-blue-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-1"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Back to Dashboard
+        </button>
+      </div>
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
         <h1 className="text-3xl font-bold text-center mb-8">User Profile</h1>
 
@@ -198,6 +219,16 @@ const UserDetailsPage = () => {
               </button>
             </div>
           )}
+        </div>
+
+        {/* Preferences Section */}
+        <div className="col-span-2 mt-6">
+          <button
+            onClick={() => navigate("/preferences-setup")}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+          >
+            Update Your Roommate Preferences
+          </button>
         </div>
       </div>
     </div>

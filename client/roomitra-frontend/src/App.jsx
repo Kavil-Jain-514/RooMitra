@@ -9,6 +9,7 @@ import ProviderProfileSetup from "./pages/ProviderProfileSetup";
 import LoginPage from "./pages/LoginPage";
 import UserTypeSelection from "./components/UserTypeSelection";
 import UserDetailsPage from "./pages/UserDetailsPage";
+import PreferencesSetupPage from "./pages/PreferencePage";
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/user-type-selection" element={<UserTypeSelection />} />
           <Route path="/user-details" element={<UserDetailsPage />} />
+          <Route
+            path="/preferences-setup"
+            element={
+              <ProtectedRoute>
+                <PreferencesSetupPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>

@@ -11,36 +11,41 @@ import communityBuildingPhoto from "../assets/Community_Building.png";
 const LandingPage = () => {
   const navigate = useNavigate();
   const [animateLogo, setAnimateLogo] = useState(true);
-  const [displayIndex, setDisplayIndex] = useState(0); // Track index for typewriter effect
+  const [displayIndex, setDisplayIndex] = useState(0);
   const [showTagline, setShowTagline] = useState(true);
   const [showSelection, setShowSelection] = useState(false);
 
   const fullTagline = "Your perfect MITRA is just a click away!";
 
   useEffect(() => {
-    const typingSpeed = 50; // Time interval for typing effect
+    // Check if user is logged in
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/dashboard");
+      return;
+    }
 
-    // Only start typing if there is text in `fullTagline`
+    // Original animation logic
+    const typingSpeed = 50;
     if (displayIndex < fullTagline.length) {
       const typingInterval = setInterval(() => {
         setDisplayIndex((prevIndex) => prevIndex + 1);
       }, typingSpeed);
 
-      return () => clearInterval(typingInterval); // Cleanup interval on component unmount
+      return () => clearInterval(typingInterval);
     } else {
-      // After tagline is fully typed out, disappear tagline after a delay
       setTimeout(() => {
-        setShowTagline(false); // Make tagline disappear
-        setShowSelection(true); // Show selection after tagline disappears
-      }, 2000); // Time before tagline disappears
+        setShowTagline(false);
+        setShowSelection(true);
+      }, 2000);
 
       const logoTimer = setTimeout(() => {
-        setAnimateLogo(false); // Move logo to header
-      }, 1500); // Make logo disappear after tagline disappears
+        setAnimateLogo(false);
+      }, 1500);
 
-      return () => clearTimeout(logoTimer); // Cleanup timeout
+      return () => clearTimeout(logoTimer);
     }
-  }, [displayIndex, fullTagline.length]);
+  }, [displayIndex, fullTagline.length, navigate]);
 
   const handleSelection = (type) => {
     navigate("/userSignup", { state: { userType: type } });

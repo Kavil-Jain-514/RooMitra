@@ -3,7 +3,6 @@ package dev.kavil.roomitra.models;
 import java.util.Date;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,10 +18,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SeekerPreferences {
     @Id
-    private ObjectId id;
-    private ObjectId seekerId;
-    private String personalBio;
-    private List<PreferenceAnswer> answersToPreferencesQuestions;
+    private String id;
+    private String userId;
+    private List<PreferenceAnswer> answers;
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate
@@ -32,7 +30,7 @@ public class SeekerPreferences {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class PreferenceAnswer {
-        private ObjectId questionId; // Refers to SeekerPreferenceQuestions
+        private String questionId; // Refers to SeekerPreferenceQuestions
         private String answer;
     }
 }
