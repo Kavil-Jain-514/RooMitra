@@ -54,6 +54,12 @@ const PreferencesSetupPage = () => {
     }
   };
 
+  const handleBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+    }
+  };
+
   const submitPreferences = async () => {
     try {
       const endpoint = isProvider
@@ -103,6 +109,8 @@ const PreferencesSetupPage = () => {
           currentAnswer={answers[questions[currentQuestionIndex]._id]}
           onAnswerSelect={handleAnswerSelect}
           onSkip={handleSkip}
+          onBack={handleBack}
+          isFirstQuestion={currentQuestionIndex === 0}
         />
       </div>
     </div>
