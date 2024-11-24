@@ -1,7 +1,7 @@
 package dev.kavil.roomitra.models;
 
 import java.util.Date;
-import org.bson.types.ObjectId;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomDescription {
     @Id
-    private ObjectId id; // Room description ID
+    private String _id; // Room description ID
 
-    private ObjectId providerId; // Foreign key referring to RoomProviders
+    private String providerId; // Foreign key referring to RoomProviders
 
     private int sqft; // Square footage of the room
     private int rooms; // Number of rooms
@@ -36,7 +36,7 @@ public class RoomDescription {
     private int bed; // Number of bedrooms
 
     // Location Details
-    private ObjectId locationId;
+    private String locationId;
 
     private String societyDescription; // Society or community description
     private String comments; // Additional comments about the room

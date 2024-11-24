@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Locations {
     @Id
-    private ObjectId id;
+    private String id;
     private String streetName;
     private String apartmentNumber;
     private String city;

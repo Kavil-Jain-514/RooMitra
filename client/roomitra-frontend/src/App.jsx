@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage";
 import UserTypeSelection from "./components/UserTypeSelection";
 import UserDetailsPage from "./pages/UserDetailsPage";
 import PreferencesSetupPage from "./pages/PreferencePage";
+import RoomDetailsPage from "./pages/RoomDetailsPage";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/add-room-details" element={<RoomDetailsPage />} />
         </Routes>
       </div>
     </Router>
