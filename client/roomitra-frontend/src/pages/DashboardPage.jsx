@@ -30,10 +30,15 @@ const Dashboard = () => {
     };
 
     const fetchUsers = async () => {
-      const endpoint = isProvider ? "/users/seekers" : "/users/providers";
       try {
-        const response = await api.get(endpoint);
-        setUsers(response.data);
+        if (isProvider) {
+          const response = await api.get("/users/seekers");
+          setUsers(response.data);
+        } else {
+          // For room seekers, fetch providers with room descriptions
+          const response = await api.get("/users/providers-with-rooms");
+          setUsers(response.data);
+        }
       } catch (error) {
         console.error(
           `Error fetching ${isProvider ? "seekers" : "providers"}:`,

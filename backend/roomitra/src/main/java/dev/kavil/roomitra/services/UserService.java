@@ -1,9 +1,13 @@
 package dev.kavil.roomitra.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import dev.kavil.roomitra.models.RoomDescription;
 import dev.kavil.roomitra.models.RoomProviders;
 import dev.kavil.roomitra.models.RoomSeekers;
 import dev.kavil.roomitra.repository.RoomSeekersRepository;
@@ -14,6 +18,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class UserService {
@@ -24,20 +29,12 @@ public class UserService {
     @Autowired
     private RoomProvidersRepository roomProvidersRepository;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     private Set<String> invalidatedTokens = new HashSet<>();
-
-    // Email validation helper
-    private boolean isValidEmail(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
-    }
-
-    // Check if email already exists
-    private boolean isEmailTaken(String email) {
-        return roomSeekersRepository.findByEmail(email) != null ||
-                roomProvidersRepository.findByEmail(email) != null;
-    }
 
     // Register a RoomSeekers
     public RoomSeekers registerRoomSeeker(RoomSeekers seeker) {
@@ -154,6 +151,26 @@ public class UserService {
             provider.setProfilePhoto(photoUrl);
             roomProvidersRepository.save(provider);
         }
+    }
+
+    public List<Map<String, Object>> getAllRoomProvidersWithRooms() {
+        List<RoomProviders> providers = roomProvidersRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (RoomProviders provider : providers) {
+            // Get room description for this provider
+            Query query = new Query(Criteria.where("providerId").is(provider.get_id()));
+            List<RoomDescription> rooms = mongoTemplate.find(query, RoomDescription.class);
+
+            if (!rooms.isEmpty()) {
+                Map<String, Object> providerWithRoom = new HashMap<>();
+                providerWithRoom.put("provider", provider);
+                providerWithRoom.put("roomDescription", rooms.get(0));
+                result.add(providerWithRoom);
+            }
+        }
+
+        return result;
     }
 
 }

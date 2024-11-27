@@ -153,6 +153,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/providers-with-rooms")
+    public ResponseEntity<?> getAllRoomProvidersWithRooms() {
+        try {
+            List<Map<String, Object>> providersWithRooms = userService.getAllRoomProvidersWithRooms();
+            return ResponseEntity.ok(providersWithRooms);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching room providers with rooms");
+        }
+    }
+
     @PostMapping(value = "/upload-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadProfilePhoto(
             @RequestPart("file") MultipartFile file,

@@ -11,6 +11,8 @@ import UserTypeSelection from "./components/UserTypeSelection";
 import UserDetailsPage from "./pages/UserDetailsPage";
 import PreferencesSetupPage from "./pages/PreferencePage";
 import RoomDetailsPage from "./pages/RoomDetailsPage";
+import RoomProviderDetailsPage from "./pages/RoomProviderDetailsPage";
+import RoomSeekerDetailsPage from "./pages/RoomSeekerDetailsPage";
 
 function App() {
   return (
@@ -54,7 +56,30 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/add-room-details" element={<RoomDetailsPage />} />
+          <Route
+            path="/add-room-details"
+            element={
+              <ProtectedRoute>
+                <RoomDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update-room-details"
+            element={
+              <ProtectedRoute>
+                <RoomDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/provider-details/:id"
+            element={<RoomProviderDetailsPage />}
+          />
+          <Route
+            path="/seeker-details/:id"
+            element={<RoomSeekerDetailsPage />}
+          />
         </Routes>
       </div>
     </Router>

@@ -4,7 +4,7 @@ import logo from "../assets/RooMitra-logo.svg";
 import { FaBell, FaUserCircle, FaSignOutAlt, FaSearch } from "react-icons/fa";
 import api from "../api/axiosConfig";
 
-const Header = ({ isDashboard = false }) => {
+const Header = ({ isDashboard = false, hideSearch = false }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -37,7 +37,7 @@ const Header = ({ isDashboard = false }) => {
             <a href={isDashboard ? "/dashboard" : "#selection"}>
               <img src={logo} alt="RooMitra Logo" className="h-20 w-auto" />
             </a>
-            {isDashboard && (
+            {isDashboard && !hideSearch && (
               <div className="ml-8 flex-1 max-w-lg">
                 <div className="relative">
                   <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

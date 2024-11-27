@@ -10,6 +10,7 @@ const UserDetailsPage = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedBio, setEditedBio] = useState("");
+  const [hasRoomDetails, setHasRoomDetails] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -230,6 +231,32 @@ const UserDetailsPage = () => {
             Update Your Roommate Preferences
           </button>
         </div>
+
+        {/* Room Details Section - Only for Room Providers */}
+        {user.userType === "RoomProvider" && (
+          <div className="col-span-2 mt-6">
+            <button
+              onClick={async () => {
+                try {
+                  const response = await api.get(
+                    `/room-description/provider/${user._id}`
+                  );
+                  const hasDetails = response.data && response.data.length > 0;
+                  setHasRoomDetails(hasDetails);
+                  navigate(
+                    hasDetails ? "/update-room-details" : "/add-room-details"
+                  );
+                } catch (error) {
+                  console.error("Error checking room details:", error);
+                  toast.error("Error checking room details");
+                }
+              }}
+              className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
+            >
+              {hasRoomDetails ? "Update Room Details" : "Add Room Details"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

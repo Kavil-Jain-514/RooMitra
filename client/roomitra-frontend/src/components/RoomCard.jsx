@@ -6,89 +6,114 @@ import {
   FaHome,
   FaUser,
   FaMapMarkerAlt,
+  FaDollarSign,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const RoomCard = ({ provider, isProviderView }) => {
-  console.log("RoomCard received props:", { provider, isProviderView });
+  const navigate = useNavigate();
+  const providerData = isProviderView ? provider : provider.provider;
+  const roomDescription = !isProviderView ? provider.roomDescription : null;
+
+  const handleCardClick = () => {
+    if (isProviderView) {
+      navigate(`/seeker-details/${provider._id}`);
+    } else {
+      navigate(`/provider-details/${provider.provider._id}`);
+    }
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div
+      onClick={handleCardClick}
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+    >
       <img
-        src={provider.profilePhoto || "https://via.placeholder.com/300x200"}
-        alt={`${provider.firstName}'s profile`}
+        src={providerData.profilePhoto || "https://via.placeholder.com/300x200"}
+        alt={`${providerData.firstName}'s profile`}
         className="w-full h-48 object-cover"
       />
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-900">
-            {provider.firstName} {provider.lastName}
+            {providerData.firstName} {providerData.lastName}
           </h3>
-          {provider.rating && (
+          {providerData.rating && (
             <div className="flex items-center">
               <FaStar className="text-yellow-400 mr-1" />
-              <span className="text-sm text-gray-600">{provider.rating}</span>
+              <span className="text-sm text-gray-600">
+                {providerData.rating}
+              </span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center mb-2">
-          <FaMapMarkerAlt className="text-gray-400 mr-1" />
-          <p className="text-gray-600">
-            {provider.location || "Location not specified"}
-          </p>
-        </div>
+        {!isProviderView && roomDescription && (
+          <>
+            <div className="flex items-center mb-2">
+              <FaMapMarkerAlt className="text-gray-400 mr-1" />
+              <p className="text-gray-600">
+                {roomDescription.city}, {roomDescription.zipcode}
+              </p>
+            </div>
 
-        {isProviderView ? (
-          // Seeker Profile Details
+            <div className="flex items-center space-x-4 mb-3">
+              <div className="flex items-center">
+                <FaBed className="text-gray-400 mr-1" />
+                <span className="text-sm text-gray-600">
+                  {roomDescription.bed}
+                </span>
+              </div>
+              <div className="flex items-center">
+                <FaBath className="text-gray-400 mr-1" />
+                <span className="text-sm text-gray-600">
+                  {roomDescription.bath}
+                </span>
+              </div>
+              <div className="flex items-center">
+                <FaHome className="text-gray-400 mr-1" />
+                <span className="text-sm text-gray-600">
+                  {roomDescription.roomType}
+                </span>
+              </div>
+              <div className="flex items-center">
+                <FaDollarSign className="text-gray-400 mr-1" />
+                <span className="text-sm text-gray-600">
+                  {providerData.rent}/month
+                </span>
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-600 mb-2">
+              <p className="line-clamp-2">
+                {roomDescription.societyDescription}
+              </p>
+            </div>
+          </>
+        )}
+
+        {isProviderView && (
+          // Existing seeker view code
           <div className="space-y-2">
             <div className="flex items-center">
               <FaUser className="text-gray-400 mr-2" />
               <span className="text-sm text-gray-600">
-                {provider.gender}, {calculateAge(provider.dateOfBirth)} years
+                {providerData.gender}, {calculateAge(providerData.dateOfBirth)}{" "}
+                years
               </span>
             </div>
-            {provider.occupation && (
+            {providerData.occupation && (
               <p className="text-sm text-gray-600">
-                Occupation: {provider.occupation}
+                Occupation: {providerData.occupation}
               </p>
             )}
-            {provider.bio && (
+            {providerData.bio && (
               <p className="text-sm text-gray-600 line-clamp-2">
-                {provider.bio}
+                {providerData.bio}
               </p>
             )}
-          </div>
-        ) : (
-          // Room Provider Details
-          <div className="flex items-center space-x-4 mb-3">
-            <div className="flex items-center">
-              <FaBed className="text-gray-400 mr-1" />
-              <span className="text-sm text-gray-600">{provider.beds}</span>
-            </div>
-            <div className="flex items-center">
-              <FaBath className="text-gray-400 mr-1" />
-              <span className="text-sm text-gray-600">{provider.baths}</span>
-            </div>
-            <div className="flex items-center">
-              <FaHome className="text-gray-400 mr-1" />
-              <span className="text-sm text-gray-600">{provider.roomType}</span>
-            </div>
           </div>
         )}
-
-        <div className="flex justify-between items-center mt-4">
-          {!isProviderView && provider.price && (
-            <span className="text-lg font-bold text-blue-600">
-              ${provider.price}/mo
-            </span>
-          )}
-          <button
-            onClick={() => (window.location.href = `/profile/${provider._id}`)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
-          >
-            View Full Profile
-          </button>
-        </div>
       </div>
     </div>
   );
