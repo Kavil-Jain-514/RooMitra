@@ -2,7 +2,6 @@ package dev.kavil.roomitra.models;
 
 import java.util.Date;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -39,10 +38,10 @@ public class RoomProviders {
     }
 
     private UserType userType;
-    private ObjectId roomLocationId;
+    private String roomLocationId;
     private float rent;
-    private ObjectId roomDetailsId;
-    private ObjectId preferencesId;
+    private String roomDetailsId;
+    private String preferencesId;
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate

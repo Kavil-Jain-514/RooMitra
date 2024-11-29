@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Locations {
     @Id
-    private String id;
+    private String _id;
     private String streetName;
     private String apartmentNumber;
     private String city;

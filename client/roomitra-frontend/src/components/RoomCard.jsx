@@ -79,7 +79,7 @@ const RoomCard = ({ provider, isProviderView }) => {
               <div className="flex items-center">
                 <FaDollarSign className="text-gray-400 mr-1" />
                 <span className="text-sm text-gray-600">
-                  {providerData.rent}/month
+                  {roomDescription.rent}/month
                 </span>
               </div>
             </div>

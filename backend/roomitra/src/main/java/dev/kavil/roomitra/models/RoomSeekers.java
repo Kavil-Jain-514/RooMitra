@@ -3,7 +3,6 @@ package dev.kavil.roomitra.models;
 import java.util.Date;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -40,9 +39,9 @@ public class RoomSeekers {
     }
 
     private UserType userType;
-    private List<ObjectId> preferredLocationIds;
+    private List<String> preferredLocationIds;
     private float minimumRent;
-    private ObjectId preferencesId;
+    private String preferencesId;
     @CreatedDate
     private Date createdAt;
     @LastModifiedDate

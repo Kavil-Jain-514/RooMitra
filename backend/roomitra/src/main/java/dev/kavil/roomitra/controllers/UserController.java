@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import dev.kavil.roomitra.models.RoomProviders;
 import dev.kavil.roomitra.models.RoomSeekers;
 import dev.kavil.roomitra.services.UserService;
+import dev.kavil.roomitra.services.S3Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,9 @@ import java.util.UUID;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private S3Service s3Service;
 
     // Register RoomSeeker
     @PostMapping("/register/seeker")
@@ -168,31 +172,12 @@ public class UserController {
             @RequestPart("file") MultipartFile file,
             @RequestParam("email") String email) {
         try {
-            // Create directory if it doesn't exist
-            String uploadDir = System.getProperty("user.dir") + "/uploads/profile-photos";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // Generate unique filename
-            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            Path filePath = uploadPath.resolve(filename);
-
-            // Save the file
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            // Create URL for the saved file
-            String fileUrl = "/uploads/profile-photos/" + filename;
-
-            // Update user's profile photo in database
+            String fileUrl = s3Service.uploadFile(file, "users");
             userService.updateProfilePhoto(email, fileUrl);
-
             Map<String, String> response = new HashMap<>();
             response.put("photoUrl", fileUrl);
-
             return ResponseEntity.ok(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to upload photo: " + e.getMessage());
         }
     }

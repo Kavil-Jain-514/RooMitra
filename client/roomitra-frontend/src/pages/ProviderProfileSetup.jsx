@@ -3,13 +3,33 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import api from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schema = yup.object().shape({
+  bio: yup
+    .string()
+    .required("Bio is required")
+    .min(50, "Bio must be at least 50 characters")
+    .max(500, "Bio cannot exceed 500 characters"),
+  preferences: yup.object().shape({
+    // Add dynamic validation based on preference questions
+  }),
+  roomDescription: yup.object().shape({
+    title: yup.string().required("Title is required"),
+    description: yup.string().required("Description is required"),
+    rent: yup.number().required("Rent is required").min(0),
+  }),
+});
 
 const ProviderProfileSetup = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [preferenceQuestions, setPreferenceQuestions] = useState([]);

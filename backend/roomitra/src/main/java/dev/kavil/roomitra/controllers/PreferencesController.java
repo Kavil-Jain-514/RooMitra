@@ -19,19 +19,18 @@ public class PreferencesController {
     @PostMapping("/seeker/preferences")
     public ResponseEntity<?> saveSeekerPreferences(@RequestBody SeekerPreferences request) {
         try {
-            preferencesService.saveSeekerPreferences(request);
-            return ResponseEntity.ok().build();
+            SeekerPreferences savedPreferences = preferencesService.saveSeekerPreferences(request);
+            return ResponseEntity.ok(savedPreferences);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error saving preferences");
+            return ResponseEntity.status(500).body("Error saving preferences: " + e.getMessage());
         }
     }
 
     @PostMapping("/provider/preferences")
     public ResponseEntity<?> saveProviderPreferences(@RequestBody ProviderPreferences request) {
         try {
-            System.out.println("Received request: " + request);
-            preferencesService.saveProviderPreferences(request);
-            return ResponseEntity.ok().build();
+            ProviderPreferences savedPreferences = preferencesService.saveProviderPreferences(request);
+            return ResponseEntity.ok(savedPreferences);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error saving preferences: " + e.getMessage());

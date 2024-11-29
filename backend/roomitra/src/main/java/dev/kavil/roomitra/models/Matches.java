@@ -1,7 +1,6 @@
 package dev.kavil.roomitra.models;
 
 import java.util.Date;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,9 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Matches {
-    private ObjectId id;
-    private ObjectId seekerId;
-    private ObjectId providerId;
+    private String _id;
+    private String seekerId;
+    private String providerId;
 
     public enum MatchStatus {
         PENDING, ACCEPT, REJECTED

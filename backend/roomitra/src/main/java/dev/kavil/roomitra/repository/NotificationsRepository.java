@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import dev.kavil.roomitra.models.Notifications;
 
 @Repository
-public interface NotificationsRepository extends MongoRepository<Notifications, ObjectId> {
+public interface NotificationsRepository extends MongoRepository<Notifications, String> {
     // Custom query methods can be defined here if needed
 }

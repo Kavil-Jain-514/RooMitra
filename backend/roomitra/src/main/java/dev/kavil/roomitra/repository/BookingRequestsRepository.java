@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import dev.kavil.roomitra.models.BookingRequests;
 
 @Repository
-public interface BookingRequestsRepository extends MongoRepository<BookingRequests, ObjectId> {
+public interface BookingRequestsRepository extends MongoRepository<BookingRequests, String> {
     // Custom query methods can be defined here if needed
 }

@@ -8,6 +8,7 @@ const PreferencesSetupPage = () => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const isProvider = user?.userType === "RoomProvider";
@@ -60,7 +61,23 @@ const PreferencesSetupPage = () => {
     }
   };
 
+  const validateAnswers = () => {
+    const newErrors = {};
+    questions.forEach((question) => {
+      if (!answers[question._id] && !question.optional) {
+        newErrors[question._id] = "This question requires an answer";
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const submitPreferences = async () => {
+    if (!validateAnswers()) {
+      toast.error("Please answer all required questions");
+      return;
+    }
+
     try {
       const endpoint = isProvider
         ? "/provider/preferences"
@@ -73,8 +90,13 @@ const PreferencesSetupPage = () => {
           answer,
         })),
       };
-      console.log(preferencesData);
-      await api.post(endpoint, preferencesData);
+
+      const response = await api.post(endpoint, preferencesData);
+
+      // Update the user in localStorage with the new preferences
+      const updatedUser = { ...user, preferencesId: response.data.id };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
       toast.success("Preferences saved successfully!");
       navigate("/dashboard");
     } catch (error) {

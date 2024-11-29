@@ -32,6 +32,7 @@ const UserDetailsPage = () => {
       );
       setUser(response.data);
       setEditedBio(response.data.bio || "");
+      setProfilePhoto(response.data.profilePhoto);
     } catch (error) {
       console.error("Error fetching user details:", error);
       toast.error("Failed to load user details");
@@ -45,7 +46,8 @@ const UserDetailsPage = () => {
       setPhotoPreview(URL.createObjectURL(file));
 
       const formData = new FormData();
-      formData.append("profilePhoto", file);
+      formData.append("file", file);
+      formData.append("email", user.email);
 
       try {
         const response = await api.post("/users/upload-photo", formData, {
@@ -108,9 +110,9 @@ const UserDetailsPage = () => {
         <div className="flex justify-center mb-8">
           <div className="relative">
             <div className="w-32 h-32 rounded-full overflow-hidden">
-              {photoPreview || user.profilePhoto ? (
+              {photoPreview || profilePhoto ? (
                 <img
-                  src={photoPreview || getFullImageUrl(user.profilePhoto)}
+                  src={photoPreview || profilePhoto}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />

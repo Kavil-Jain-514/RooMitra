@@ -3,13 +3,38 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import api from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schema = yup.object().shape({
+  bio: yup
+    .string()
+    .required("Bio is required")
+    .min(50, "Bio must be at least 50 characters")
+    .max(500, "Bio cannot exceed 500 characters"),
+  profilePhoto: yup
+    .mixed()
+    .test("fileSize", "File size is too large", (value) => {
+      if (!value) return true; // Allow empty
+      return value[0]?.size <= 5000000; // 5MB limit
+    })
+    .test("fileType", "Unsupported file type", (value) => {
+      if (!value) return true;
+      return ["image/jpeg", "image/png", "image/jpg"].includes(value[0]?.type);
+    }),
+  preferences: yup.object().shape({
+    // Add dynamic validation based on preference questions
+  }),
+});
 
 const SeekerProfileSetup = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [preferenceQuestions, setPreferenceQuestions] = useState([]);

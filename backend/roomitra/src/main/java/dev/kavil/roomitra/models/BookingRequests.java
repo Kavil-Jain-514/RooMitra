@@ -1,7 +1,6 @@
 package dev.kavil.roomitra.models;
 
 import java.util.Date;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,10 +15,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookingRequests {
     @Id
-    private ObjectId id;
-    private ObjectId roomSeekerId;
-    private ObjectId roomProviderId;
-    private ObjectId roomDescriptionId;
+    private String _id;
+    private String roomSeekerId;
+    private String roomProviderId;
+    private String roomDescriptionId;
 
     public enum BookingStatus {
         PENDING, ACCEPT, REJECTED

@@ -1,6 +1,7 @@
 package dev.kavil.roomitra.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,9 +12,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import dev.kavil.roomitra.models.RoomDescription;
 import dev.kavil.roomitra.services.RoomDescriptionService;
+import dev.kavil.roomitra.services.S3Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 /**
  * REST Controller for managing room descriptions
@@ -25,16 +28,40 @@ public class RoomDescriptionController {
     @Autowired
     private RoomDescriptionService roomDescriptionService;
 
+    @Autowired
+    private S3Service s3Service;
+
     /**
      * Creates a new room description
      * 
      * @param roomDescription The room description details
      * @return ResponseEntity containing the saved room description
      */
-    @PostMapping
-    public ResponseEntity<RoomDescription> createRoomDescription(@RequestBody RoomDescription roomDescription) {
-        RoomDescription savedDescription = roomDescriptionService.createRoomDescription(roomDescription);
-        return ResponseEntity.ok(savedDescription);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createRoomDescription(
+            @RequestParam("roomData") String roomDataJson,
+            @RequestParam(value = "photos", required = false) List<MultipartFile> photos) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            RoomDescription roomData = mapper.readValue(roomDataJson, RoomDescription.class);
+
+            if (photos != null && !photos.isEmpty()) {
+                List<String> photoUrls = new ArrayList<>();
+                for (MultipartFile photo : photos) {
+                    String photoUrl = s3Service.uploadFile(photo, "rooms");
+                    photoUrls.add(photoUrl);
+                }
+                roomData.setPhotoUrls(photoUrls);
+            }
+
+            RoomDescription savedDescription = roomDescriptionService.createRoomDescription(roomData);
+            return ResponseEntity.ok(savedDescription);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().body("Invalid room data format: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error creating room description: " + e.getMessage());
+        }
     }
 
     /**
@@ -67,7 +94,11 @@ public class RoomDescriptionController {
             RoomDescription roomData = mapper.readValue(roomDataJson, RoomDescription.class);
 
             if (photos != null && !photos.isEmpty()) {
-                List<String> photoUrls = roomDescriptionService.uploadPhotos(photos, id);
+                List<String> photoUrls = new ArrayList<>();
+                for (MultipartFile photo : photos) {
+                    String photoUrl = s3Service.uploadFile(photo, "rooms");
+                    photoUrls.add(photoUrl);
+                }
                 roomData.setPhotoUrls(photoUrls);
             }
 
@@ -79,7 +110,7 @@ public class RoomDescriptionController {
         } catch (JsonProcessingException e) {
             return ResponseEntity.badRequest().body("Invalid room data format: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error updating room description: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error updating room description: " + e.getMessage());
         }
     }
 }

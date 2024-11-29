@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import dev.kavil.roomitra.models.RoomDescription;
 import dev.kavil.roomitra.repository.RoomDescriptionRepository;
+import dev.kavil.roomitra.models.RoomProviders;
+import dev.kavil.roomitra.repository.RoomProvidersRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +31,20 @@ public class RoomDescriptionService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private RoomProvidersRepository roomProvidersRepository;
+
     // Create a new room description
     public RoomDescription createRoomDescription(RoomDescription roomDescription) {
-        return roomDescriptionRepository.save(roomDescription);
+        RoomDescription savedDescription = roomDescriptionRepository.save(roomDescription);
+
+        // Update the provider's roomDetailsId
+        RoomProviders provider = roomProvidersRepository.findById(roomDescription.getProviderId())
+                .orElseThrow(() -> new RuntimeException("Provider not found"));
+        provider.setRoomDetailsId(savedDescription.get_id());
+        roomProvidersRepository.save(provider);
+
+        return savedDescription;
     }
 
     // Get room description by ID
@@ -73,13 +86,22 @@ public class RoomDescriptionService {
                     description.setRefrigerator(updatedDescription.isRefrigerator());
                     description.setSocietyDescription(updatedDescription.getSocietyDescription());
                     description.setComments(updatedDescription.getComments());
+                    description.setRent(updatedDescription.getRent());
 
                     // Only update photoUrls if new ones are provided
                     if (updatedDescription.getPhotoUrls() != null && !updatedDescription.getPhotoUrls().isEmpty()) {
                         description.setPhotoUrls(updatedDescription.getPhotoUrls());
                     }
 
-                    return roomDescriptionRepository.save(description);
+                    RoomDescription savedDescription = roomDescriptionRepository.save(description);
+
+                    // Update the provider's roomDetailsId
+                    RoomProviders provider = roomProvidersRepository.findById(description.getProviderId())
+                            .orElseThrow(() -> new RuntimeException("Provider not found"));
+                    provider.setRoomDetailsId(savedDescription.get_id());
+                    roomProvidersRepository.save(provider);
+
+                    return savedDescription;
                 })
                 .orElse(null);
     }

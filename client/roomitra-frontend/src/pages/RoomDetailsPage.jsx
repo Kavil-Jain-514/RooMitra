@@ -19,6 +19,7 @@ const RoomDetailsPage = () => {
   const [photoPreviews, setPhotoPreviews] = useState([]);
   const isUpdateMode = location.pathname === "/update-room-details";
   const [roomDescriptionId, setRoomDescriptionId] = useState(null);
+  const [rent, setRent] = useState(0);
 
   useEffect(() => {
     if (isUpdateMode) {
@@ -38,6 +39,9 @@ const RoomDetailsPage = () => {
             });
             if (roomData.photoUrls) {
               setPhotoPreviews(roomData.photoUrls);
+            }
+            if (roomData.rent) {
+              setRent(roomData.rent);
             }
           }
         } catch (error) {
@@ -79,6 +83,7 @@ const RoomDetailsPage = () => {
         providerId: user._id,
         ...data,
         availabilityDate: new Date(data.availabilityDate),
+        rent,
       };
       formData.append("roomData", JSON.stringify(roomData));
 
@@ -92,9 +97,13 @@ const RoomDetailsPage = () => {
 
       const method = isUpdateMode ? "put" : "post";
 
-      await api[method](endpoint, formData, {
+      const response = await api[method](endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
+      // Update the user in localStorage with the new room details ID
+      const updatedUser = { ...user, roomDetailsId: response.data._id };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
 
       toast.success(
         `Room details ${isUpdateMode ? "updated" : "added"} successfully!`
@@ -117,6 +126,26 @@ const RoomDetailsPage = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 bg-white p-8 rounded-lg shadow"
         >
+          {/* Rent Slider */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Rent*
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="2000"
+              value={rent}
+              onChange={(e) => setRent(e.target.value)}
+              className="mt-1 w-full"
+            />
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>$0</span>
+              <span>${rent}</span>
+              <span>$2000</span>
+            </div>
+          </div>
+
           {/* Room Specifications */}
           <div className="grid grid-cols-2 gap-6">
             <div>

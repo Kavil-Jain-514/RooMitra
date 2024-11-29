@@ -31,6 +31,7 @@ public class RoomDescription {
     private int bath;
     private int bed;
     private int floor;
+    private int rent;
 
     // Location details
     private String streetName;

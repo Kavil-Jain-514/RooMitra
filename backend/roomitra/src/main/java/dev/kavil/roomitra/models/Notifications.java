@@ -1,7 +1,6 @@
 package dev.kavil.roomitra.models;
 
 import java.util.Date;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Notifications {
     @Id
-    private ObjectId id;
-    private ObjectId userId; // Reference to the user (RoomSeeker or RoomProvider)
+    private String _id;
+    private String userId; // Reference to the user (RoomSeeker or RoomProvider)
 
     public enum NotificationType {
         NEW_MATCH, MATCH_STATUS, MESSAGE, NEW_BOOKING_REQUEST, BOOKING_STATUS, FEEDBACK, VERIFICATION_STATUS,
