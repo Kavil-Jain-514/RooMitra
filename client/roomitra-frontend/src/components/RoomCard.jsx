@@ -102,7 +102,7 @@ const RoomCard = ({ provider, isProviderView }) => {
                 years
               </span>
             </div>
-            {providerData.occupation && (
+            {/* {providerData.occupation && (
               <p className="text-sm text-gray-600">
                 Occupation: {providerData.occupation}
               </p>
@@ -111,7 +111,7 @@ const RoomCard = ({ provider, isProviderView }) => {
               <p className="text-sm text-gray-600 line-clamp-2">
                 {providerData.bio}
               </p>
-            )}
+            )} */}
           </div>
         )}
       </div>

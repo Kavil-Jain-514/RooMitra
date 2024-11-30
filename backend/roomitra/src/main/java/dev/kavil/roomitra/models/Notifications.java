@@ -20,7 +20,7 @@ public class Notifications {
 
     public enum NotificationType {
         NEW_MATCH, MATCH_STATUS, MESSAGE, NEW_BOOKING_REQUEST, BOOKING_STATUS, FEEDBACK, VERIFICATION_STATUS,
-        NEW_LISTING, PROFILE_UPDATED
+        NEW_LISTING, PROFILE_UPDATED, CONNECTION_REQUEST
     }
 
     private NotificationType type;

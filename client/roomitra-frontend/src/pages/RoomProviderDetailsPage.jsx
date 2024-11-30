@@ -10,11 +10,14 @@ import {
 import api from "../api/axiosConfig";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { toast } from "react-hot-toast";
 
 const RoomProviderDetailsPage = () => {
   const { id } = useParams();
   const [providerData, setProviderData] = useState(null);
   const [roomDescription, setRoomDescription] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchProviderDetails = async () => {
@@ -32,6 +35,33 @@ const RoomProviderDetailsPage = () => {
 
     fetchProviderDetails();
   }, [id]);
+
+  const handleConnect = async () => {
+    try {
+      const response = await api.post("/matches/request", {
+        seekerId: user._id,
+        providerId: id,
+        status: "PENDING",
+      });
+
+      // Create notification for the provider
+      await api.post("/notifications", {
+        userId: id,
+        type: "NEW_MATCH",
+        content: `${user.firstName} ${user.lastName} wants to connect with you`,
+        data: {
+          seekerId: user._id,
+          matchId: response.data.id,
+        },
+      });
+
+      toast.success("Connection request sent!");
+      setConnectionStatus("PENDING");
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+      toast.error("Failed to send connection request");
+    }
+  };
 
   if (!providerData || !roomDescription) return <div>Loading...</div>;
 
@@ -89,7 +119,7 @@ const RoomProviderDetailsPage = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center">
                     <FaBed className="text-gray-500 mr-2" />
-                    <span>{roomDescription.bed} Beds</span>
+                    <span>{roomDescription.rooms} Beds</span>
                   </div>
                   <div className="flex items-center">
                     <FaBath className="text-gray-500 mr-2" />
@@ -101,7 +131,7 @@ const RoomProviderDetailsPage = () => {
                   </div>
                   <div className="flex items-center">
                     <FaDollarSign className="text-gray-500 mr-2" />
-                    <span>{providerData.rent}/month</span>
+                    <span>{roomDescription.rent}/month</span>
                   </div>
                 </div>
               </div>
@@ -134,6 +164,21 @@ const RoomProviderDetailsPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="mt-6 flex justify-center">
+        {user.userType === "RoomSeeker" && (
+          <button
+            onClick={handleConnect}
+            disabled={connectionStatus === "PENDING"}
+            className={`px-6 py-2 rounded-md ${
+              connectionStatus === "PENDING"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } text-white font-medium`}
+          >
+            {connectionStatus === "PENDING" ? "Request Pending" : "Connect"}
+          </button>
+        )}
       </div>
       <Footer />
     </div>

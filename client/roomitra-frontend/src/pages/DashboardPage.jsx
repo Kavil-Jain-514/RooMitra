@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const isProvider = user?.userType === "RoomProvider";
@@ -34,10 +36,11 @@ const Dashboard = () => {
         if (isProvider) {
           const response = await api.get("/users/seekers");
           setUsers(response.data);
+          setFilteredUsers(response.data);
         } else {
-          // For room seekers, fetch providers with room descriptions
           const response = await api.get("/users/providers-with-rooms");
           setUsers(response.data);
+          setFilteredUsers(response.data);
         }
       } catch (error) {
         console.error(
@@ -53,9 +56,36 @@ const Dashboard = () => {
     fetchUsers();
   }, [isProvider, user?._id]);
 
+  const handleSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    if (!searchValue.trim()) {
+      setFilteredUsers(users);
+      return;
+    }
+
+    const filtered = users.filter((user) => {
+      if (isProvider) {
+        // Filter seekers based on their location preference
+        return user.preferences?.some((pref) =>
+          pref.answer.toLowerCase().includes(searchValue.toLowerCase())
+        );
+      } else {
+        // Filter providers based on room location
+        return user.roomDescription?.city
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase());
+      }
+    });
+    setFilteredUsers(filtered);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Header isDashboard={true} />
+      <Header
+        isDashboard={true}
+        onSearch={handleSearch}
+        searchPlaceholder={`Search by city...`}
+      />
 
       {/* Add Room Details Popup */}
       {showPopup && (
@@ -89,7 +119,7 @@ const Dashboard = () => {
           {isProvider ? "Available Room Seekers" : "Available Room Providers"}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <RoomCard
               key={user._id}
               provider={user}

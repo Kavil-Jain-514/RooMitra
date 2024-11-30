@@ -1,12 +1,13 @@
 package dev.kavil.roomitra.repository;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-
 import dev.kavil.roomitra.models.Matches;
+import java.util.List;
 
-@Repository
-public interface MatchesRepository extends MongoRepository<Matches, ObjectId> {
-    // Custom query methods can be defined here if needed
+public interface MatchesRepository extends MongoRepository<Matches, String> {
+    List<Matches> findBySeekerIdOrderByLastInteractionAtDesc(String seekerId);
+
+    List<Matches> findByProviderIdOrderByLastInteractionAtDesc(String providerId);
+
+    boolean existsByProviderIdAndSeekerId(String providerId, String seekerId);
 }

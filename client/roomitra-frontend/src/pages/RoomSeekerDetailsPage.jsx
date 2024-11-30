@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaUser, FaBriefcase } from "react-icons/fa";
+import {
+  FaUser,
+  FaBriefcase,
+  FaStar,
+  FaLanguage,
+  FaGlobe,
+} from "react-icons/fa";
 import api from "../api/axiosConfig";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -41,8 +47,8 @@ const RoomSeekerDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header />
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Header isDashboard={true} hideSearch={true} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Profile Header */}
           <div className="p-6 border-b">
@@ -58,12 +64,20 @@ const RoomSeekerDetailsPage = () => {
                 <h1 className="text-2xl font-bold">
                   {seekerData.firstName} {seekerData.lastName}
                 </h1>
-                <div className="flex items-center mt-2">
-                  <FaUser className="text-gray-400 mr-2" />
-                  <span className="text-gray-600">
-                    {seekerData.gender}, {calculateAge(seekerData.dateOfBirth)}{" "}
-                    years
-                  </span>
+                <div className="flex items-center mt-2 space-x-4">
+                  <div className="flex items-center">
+                    <FaUser className="text-gray-400 mr-2" />
+                    <span className="text-gray-600">
+                      {seekerData.gender},{" "}
+                      {calculateAge(seekerData.dateOfBirth)} years
+                    </span>
+                  </div>
+                  {/* {seekerData.rating && (
+                    <div className="flex items-center">
+                      <FaStar className="text-yellow-400 mr-1" />
+                      <span className="text-gray-600">{seekerData.rating}</span>
+                    </div>
+                  )} */}
                 </div>
               </div>
             </div>
@@ -71,13 +85,38 @@ const RoomSeekerDetailsPage = () => {
 
           {/* Details Section */}
           <div className="p-6">
-            <div className="grid grid-cols-1 gap-6">
-              {seekerData.occupation && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {seekerData.occupationId && (
                 <div className="flex items-center">
                   <FaBriefcase className="text-gray-400 mr-2" />
-                  <span className="text-gray-700">{seekerData.occupation}</span>
+                  <div>
+                    <span className="text-sm text-gray-500">Occupation</span>
+                    <p className="text-gray-700">{seekerData.occupationId}</p>
+                  </div>
                 </div>
               )}
+
+              {seekerData.nationalityId && (
+                <div className="flex items-center">
+                  <FaGlobe className="text-gray-400 mr-2" />
+                  <div>
+                    <span className="text-sm text-gray-500">Nationality</span>
+                    <p className="text-gray-700">{seekerData.nationalityId}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* {seekerData.languages && (
+                <div className="flex items-center">
+                  <FaLanguage className="text-gray-400 mr-2" />
+                  <div>
+                    <span className="text-sm text-gray-500">Languages</span>
+                    <p className="text-gray-700">
+                      {seekerData.languages.join(", ")}
+                    </p>
+                  </div>
+                </div>
+              )} */}
 
               {seekerData.bio && (
                 <div className="bg-gray-50 p-4 rounded-lg">

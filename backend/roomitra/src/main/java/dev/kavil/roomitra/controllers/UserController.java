@@ -26,12 +26,8 @@ import dev.kavil.roomitra.services.S3Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")

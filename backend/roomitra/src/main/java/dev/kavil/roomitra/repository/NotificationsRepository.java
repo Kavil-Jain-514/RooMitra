@@ -1,12 +1,11 @@
 package dev.kavil.roomitra.repository;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-
 import dev.kavil.roomitra.models.Notifications;
+import java.util.List;
 
-@Repository
 public interface NotificationsRepository extends MongoRepository<Notifications, String> {
-    // Custom query methods can be defined here if needed
+    List<Notifications> findByUserIdOrderByCreatedAtDesc(String userId);
+
+    List<Notifications> findByUserIdAndIsReadFalseOrderByCreatedAtDesc(String userId);
 }
