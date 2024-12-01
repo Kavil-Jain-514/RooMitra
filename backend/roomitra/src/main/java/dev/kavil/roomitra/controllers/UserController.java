@@ -133,26 +133,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/seekers")
-    public ResponseEntity<?> getAllRoomSeekers() {
-        try {
-            List<RoomSeekers> seekers = userService.getAllRoomSeekers();
-            return ResponseEntity.ok(seekers);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error fetching room seekers");
-        }
-    }
-
-    @GetMapping("/providers")
-    public ResponseEntity<?> getAllRoomProviders() {
-        try {
-            List<RoomProviders> providers = userService.getAllRoomProviders();
-            return ResponseEntity.ok(providers);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error fetching room providers");
-        }
-    }
-
     @GetMapping("/providers-with-rooms")
     public ResponseEntity<?> getAllRoomProvidersWithRooms() {
         try {

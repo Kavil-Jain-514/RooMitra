@@ -32,4 +32,12 @@ public class NotificationService {
         notification.setRead(true);
         notificationsRepository.save(notification);
     }
+
+    public void markAllNotificationsAsRead(String userId) {
+        List<Notifications> notifications = notificationsRepository.findByUserIdAndIsReadFalse(userId);
+        for (Notifications notification : notifications) {
+            notification.setRead(true);
+        }
+        notificationsRepository.saveAll(notifications);
+    }
 }

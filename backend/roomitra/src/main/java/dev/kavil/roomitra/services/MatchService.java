@@ -6,6 +6,7 @@ import dev.kavil.roomitra.models.Matches;
 import dev.kavil.roomitra.repository.MatchesRepository;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class MatchService {
@@ -41,5 +42,17 @@ public class MatchService {
 
     public boolean existsByProviderAndSeeker(String providerId, String seekerId) {
         return matchesRepository.existsByProviderIdAndSeekerId(providerId, seekerId);
+    }
+
+    public List<Matches> getPendingMatchesByUserId(String userId) {
+        List<Matches> seekerMatches = matchesRepository.findBySeekerIdAndStatus(userId, Matches.MatchStatus.PENDING);
+        List<Matches> providerMatches = matchesRepository.findByProviderIdAndStatus(userId,
+                Matches.MatchStatus.PENDING);
+
+        List<Matches> allPendingMatches = new ArrayList<>();
+        allPendingMatches.addAll(seekerMatches);
+        allPendingMatches.addAll(providerMatches);
+
+        return allPendingMatches;
     }
 }

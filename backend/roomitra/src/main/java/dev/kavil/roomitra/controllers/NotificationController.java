@@ -45,13 +45,13 @@ public class NotificationController {
         }
     }
 
-    @PutMapping("/{notificationId}/read")
-    public ResponseEntity<?> markAsRead(@PathVariable String notificationId) {
+    @PutMapping("/markAsRead/{userId}")
+    public ResponseEntity<?> markNotificationsAsRead(@PathVariable String userId) {
         try {
-            notificationService.markAsRead(notificationId);
+            notificationService.markAllNotificationsAsRead(userId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error marking notification as read: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error marking notifications as read: " + e.getMessage());
         }
     }
 }

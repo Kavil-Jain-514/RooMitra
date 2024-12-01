@@ -16,21 +16,38 @@ const Header = ({ isDashboard, onSearch, searchPlaceholder }) => {
   const shouldShowDashboardHeader =
     isDashboard || location.pathname.includes("/seeker-details/");
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (user && user._id) {
-        try {
-          const response = await api.get(`/notifications/user/${user._id}`);
-          setNotifications(response.data);
-          setUnreadCount(response.data.filter((notif) => !notif.isRead).length);
-        } catch (error) {
-          console.error("Error fetching notifications:", error);
-        }
+  const fetchNotifications = async () => {
+    if (user && user._id) {
+      try {
+        const response = await api.get(`/notifications/user/${user._id}`);
+        setNotifications(response.data);
+        setUnreadCount(response.data.filter((notif) => !notif.isRead).length);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchNotifications();
   }, []);
+
+  const handleNotificationClick = async () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications && unreadCount > 0) {
+      try {
+        // Mark all notifications as read
+        await api.put(`/notifications/markAsRead/${user._id}`);
+        // Update local state
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notif) => ({ ...notif, isRead: true }))
+        );
+        setUnreadCount(0);
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -101,7 +118,7 @@ const Header = ({ isDashboard, onSearch, searchPlaceholder }) => {
               <div className="relative" ref={notificationRef}>
                 <button
                   className="p-2 rounded-full hover:bg-gray-100 relative"
-                  onClick={() => setShowNotifications(!showNotifications)}
+                  onClick={handleNotificationClick}
                 >
                   <FaBell className="text-gray-600 text-xl" />
                   {unreadCount > 0 && (

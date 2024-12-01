@@ -10,4 +10,8 @@ public interface MatchesRepository extends MongoRepository<Matches, String> {
     List<Matches> findByProviderIdOrderByLastInteractionAtDesc(String providerId);
 
     boolean existsByProviderIdAndSeekerId(String providerId, String seekerId);
+
+    List<Matches> findBySeekerIdAndStatus(String seekerId, Matches.MatchStatus status);
+
+    List<Matches> findByProviderIdAndStatus(String providerId, Matches.MatchStatus status);
 }

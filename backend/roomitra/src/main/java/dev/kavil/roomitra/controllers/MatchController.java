@@ -36,7 +36,7 @@ public class MatchController {
         }
     }
 
-    @PutMapping("/{matchId}/respond")
+    @PutMapping("/{matchId}")
     public ResponseEntity<?> respondToMatch(
             @PathVariable String matchId,
             @RequestParam String status,
@@ -44,7 +44,6 @@ public class MatchController {
         try {
             Matches updatedMatch = matchService.updateMatchStatus(matchId, status);
 
-            // Create notification for the seeker
             notificationService.createNotification(
                     updatedMatch.getSeekerId(),
                     "CONNECTION_RESPONSE",
@@ -57,23 +56,13 @@ public class MatchController {
         }
     }
 
-    @GetMapping("/seeker/{seekerId}")
-    public ResponseEntity<?> getSeekerMatches(@PathVariable String seekerId) {
+    @GetMapping("/pending/{userId}")
+    public ResponseEntity<?> getPendingMatches(@PathVariable String userId) {
         try {
-            List<Matches> matches = matchService.getMatchesBySeekerId(seekerId);
-            return ResponseEntity.ok(matches);
+            List<Matches> pendingMatches = matchService.getPendingMatchesByUserId(userId);
+            return ResponseEntity.ok(pendingMatches);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error fetching seeker matches: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/provider/{providerId}")
-    public ResponseEntity<?> getProviderMatches(@PathVariable String providerId) {
-        try {
-            List<Matches> matches = matchService.getMatchesByProviderId(providerId);
-            return ResponseEntity.ok(matches);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error fetching provider matches: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error fetching pending matches: " + e.getMessage());
         }
     }
 }

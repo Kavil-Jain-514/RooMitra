@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  FaUser,
-  FaBriefcase,
-  FaStar,
-  FaLanguage,
-  FaGlobe,
-} from "react-icons/fa";
+import { FaUser, FaBriefcase, FaGlobe } from "react-icons/fa";
 import api from "../api/axiosConfig";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { toast } from "react-hot-toast";
 
 const calculateAge = (dateOfBirth) => {
   const today = new Date();
@@ -29,6 +24,8 @@ const calculateAge = (dateOfBirth) => {
 const RoomSeekerDetailsPage = () => {
   const { id } = useParams();
   const [seekerData, setSeekerData] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchSeekerDetails = async () => {
@@ -44,7 +41,32 @@ const RoomSeekerDetailsPage = () => {
   }, [id]);
 
   if (!seekerData) return <div>Loading...</div>;
+  const handleConnect = async () => {
+    try {
+      const response = await api.post("/matches/request", {
+        providerId: user._id,
+        seekerId: id,
+        status: "PENDING",
+      });
 
+      // Create notification for the seeker
+      await api.post("/notifications", {
+        userId: id,
+        type: "NEW_MATCH",
+        content: `${user.firstName} ${user.lastName} wants to connect with you`,
+        data: {
+          providerId: user._id,
+          matchId: response.data.id,
+        },
+      });
+
+      toast.success("Connection request sent!");
+      setConnectionStatus("PENDING");
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+      toast.error("Failed to send connection request");
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-100">
       <Header isDashboard={true} hideSearch={true} />
@@ -127,6 +149,21 @@ const RoomSeekerDetailsPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="mt-6 flex justify-center">
+        {user.userType === "RoomProvider" && (
+          <button
+            onClick={handleConnect}
+            disabled={connectionStatus === "PENDING"}
+            className={`px-6 py-2 rounded-md ${
+              connectionStatus === "PENDING"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } text-white font-medium`}
+          >
+            {connectionStatus === "PENDING" ? "Request Pending" : "Connect"}
+          </button>
+        )}
       </div>
       <Footer />
     </div>

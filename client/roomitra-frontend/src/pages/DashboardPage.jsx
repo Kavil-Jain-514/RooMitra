@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RoomCard from "../components/RoomCard";
+import ConnectionRequests from "../components/ConnectionRequests";
 import api from "../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 
@@ -86,32 +87,34 @@ const Dashboard = () => {
         onSearch={handleSearch}
         searchPlaceholder={`Search by city...`}
       />
-
-      {/* Add Room Details Popup */}
-      {showPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Add Your Room Details</h3>
-            <p className="text-gray-600 mb-6">
-              Please add your room details to help seekers find your listing.
-            </p>
-            <div className="flex justify-between">
-              <button
-                onClick={() => setShowPopup(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Later
-              </button>
-              <button
-                onClick={() => navigate("/add-room-details")}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Add Room Details
-              </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ConnectionRequests />
+        {/* Add Room Details Popup */}
+        {showPopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+              <h3 className="text-xl font-bold mb-4">Add Your Room Details</h3>
+              <p className="text-gray-600 mb-6">
+                Please add your room details to help seekers find your listing.
+              </p>
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Later
+                </button>
+                <button
+                  onClick={() => navigate("/add-room-details")}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Add Room Details
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* User Cards Grid */}
       <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
