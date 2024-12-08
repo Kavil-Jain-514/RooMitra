@@ -14,4 +14,6 @@ public interface MatchesRepository extends MongoRepository<Matches, String> {
     List<Matches> findBySeekerIdAndStatus(String seekerId, Matches.MatchStatus status);
 
     List<Matches> findByProviderIdAndStatus(String providerId, Matches.MatchStatus status);
+
+    List<Matches> findByProviderIdAndSeekerIdAndStatus(String providerId, String seekerId, Matches.MatchStatus status);
 }

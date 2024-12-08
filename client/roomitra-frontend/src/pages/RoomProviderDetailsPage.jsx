@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   FaBed,
   FaBath,
@@ -18,6 +18,8 @@ const RoomProviderDetailsPage = () => {
   const [roomDescription, setRoomDescription] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [isConnected, setIsConnected] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProviderDetails = async () => {
@@ -36,11 +38,27 @@ const RoomProviderDetailsPage = () => {
     fetchProviderDetails();
   }, [id]);
 
+  useEffect(() => {
+    const checkConnectionStatus = async () => {
+      try {
+        const response = await api.get(
+          `/matches/connection-status/${user._id}/${id}`
+        );
+        setIsConnected(response.data.connected);
+      } catch (error) {
+        console.error("Error checking connection status:", error);
+      }
+    };
+
+    checkConnectionStatus();
+  }, [id, user._id]);
+
   const handleConnect = async () => {
     try {
       const response = await api.post("/matches/request", {
         seekerId: user._id,
         providerId: id,
+        requestedBy: user._id,
         status: "PENDING",
       });
 
@@ -166,19 +184,27 @@ const RoomProviderDetailsPage = () => {
         </div>
       </div>
       <div className="mt-6 flex justify-center">
-        {user.userType === "RoomSeeker" && (
-          <button
-            onClick={handleConnect}
-            disabled={connectionStatus === "PENDING"}
-            className={`px-6 py-2 rounded-md ${
-              connectionStatus === "PENDING"
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            } text-white font-medium`}
-          >
-            {connectionStatus === "PENDING" ? "Request Pending" : "Connect"}
-          </button>
-        )}
+        {user.userType === "RoomSeeker" &&
+          (isConnected ? (
+            <button
+              onClick={() => navigate(`/chat/${id}`)}
+              className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-md"
+            >
+              Message
+            </button>
+          ) : (
+            <button
+              onClick={handleConnect}
+              disabled={connectionStatus === "PENDING"}
+              className={`px-6 py-2 rounded-md ${
+                connectionStatus === "PENDING"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white font-medium`}
+            >
+              {connectionStatus === "PENDING" ? "Request Pending" : "Connect"}
+            </button>
+          ))}
       </div>
       <Footer />
     </div>

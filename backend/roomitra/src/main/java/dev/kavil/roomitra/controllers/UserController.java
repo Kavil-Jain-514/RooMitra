@@ -177,4 +177,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/seekers")
+    public ResponseEntity<?> getAllSeekers() {
+        try {
+            List<RoomSeekers> seekers = userService.getAllRoomSeekers();
+            return ResponseEntity.ok(seekers);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching seekers: " + e.getMessage());
+        }
+    }
+
 }

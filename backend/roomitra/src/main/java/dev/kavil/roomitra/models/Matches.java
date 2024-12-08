@@ -17,9 +17,10 @@ public class Matches {
     private String _id;
     private String seekerId;
     private String providerId;
+    private String requestedBy;
 
     public enum MatchStatus {
-        PENDING, ACCEPT, REJECTED
+        PENDING, ACCEPT, REJECT
     }
 
     private MatchStatus status;

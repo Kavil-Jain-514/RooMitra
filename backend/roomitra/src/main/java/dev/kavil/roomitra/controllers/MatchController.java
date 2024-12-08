@@ -29,7 +29,24 @@ public class MatchController {
     @PostMapping("/request")
     public ResponseEntity<?> createMatchRequest(@RequestBody Matches match) {
         try {
+            // Validate that both seeker and provider IDs are present
+            if (match.getSeekerId() == null || match.getProviderId() == null) {
+                return ResponseEntity.badRequest().body("Both seeker and provider IDs are required");
+            }
+
             Matches savedMatch = matchService.createMatch(match);
+
+            // Create notification for the recipient
+            String recipientId = match.getRequestedBy().equals(match.getSeekerId())
+                    ? match.getProviderId()
+                    : match.getSeekerId();
+
+            notificationService.createNotification(
+                    recipientId,
+                    "CONNECTION_REQUEST",
+                    "You have received a new connection request",
+                    false);
+
             return ResponseEntity.ok(savedMatch);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error creating match request: " + e.getMessage());
@@ -44,11 +61,12 @@ public class MatchController {
         try {
             Matches updatedMatch = matchService.updateMatchStatus(matchId, status);
 
+            // Notify the provider about the seeker's response
             notificationService.createNotification(
-                    updatedMatch.getSeekerId(),
+                    updatedMatch.getProviderId(),
                     "CONNECTION_RESPONSE",
                     body.get("message"),
-                    true);
+                    false);
 
             return ResponseEntity.ok(updatedMatch);
         } catch (Exception e) {
@@ -63,6 +81,18 @@ public class MatchController {
             return ResponseEntity.ok(pendingMatches);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error fetching pending matches: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/connection-status/{userId1}/{userId2}")
+    public ResponseEntity<?> getConnectionStatus(
+            @PathVariable String userId1,
+            @PathVariable String userId2) {
+        try {
+            boolean isConnected = matchService.areUsersConnected(userId1, userId2);
+            return ResponseEntity.ok(Map.of("connected", isConnected));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error checking connection status: " + e.getMessage());
         }
     }
 }
