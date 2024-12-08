@@ -1,12 +1,10 @@
 package dev.kavil.roomitra.repository;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-
 import dev.kavil.roomitra.models.Messages;
+import java.util.List;
 
-@Repository
-public interface MessagesRepository extends MongoRepository<Messages, ObjectId> {
-    // Custom query methods can be defined here if needed
+public interface MessagesRepository extends MongoRepository<Messages, String> {
+    List<Messages> findBySenderIdAndRecipientIdOrRecipientIdAndSenderIdOrderBySentAtDesc(
+            String senderId1, String recipientId1, String senderId2, String recipientId2);
 }

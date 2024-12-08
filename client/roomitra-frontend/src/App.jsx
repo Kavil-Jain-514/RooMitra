@@ -13,6 +13,7 @@ import PreferencesSetupPage from "./pages/PreferencePage";
 import RoomDetailsPage from "./pages/RoomDetailsPage";
 import RoomProviderDetailsPage from "./pages/RoomProviderDetailsPage";
 import RoomSeekerDetailsPage from "./pages/RoomSeekerDetailsPage";
+import Chat from "./components/Chat";
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
             path="/seeker-details/:id"
             element={<RoomSeekerDetailsPage />}
           />
+          <Route path="/chat/:recipientId" element={<Chat />} />
         </Routes>
       </div>
     </Router>

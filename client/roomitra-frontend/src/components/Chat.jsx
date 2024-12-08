@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api";
+import api from "../api/axiosConfig";
+import { toast } from "react-hot-toast";
 
 const Chat = () => {
   const { recipientId } = useParams();
@@ -16,13 +17,13 @@ const Chat = () => {
       await api.post("/messages", {
         senderId: user._id,
         recipientId,
-        content: newMessage,
+        messageText: newMessage,
       });
       setNewMessage("");
-      // Refresh messages
       fetchMessages();
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message");
     }
   };
 
@@ -60,7 +61,7 @@ const Chat = () => {
                     : "bg-gray-200"
                 }`}
               >
-                {message.content}
+                {message.messageText}
               </div>
             </div>
           ))}
