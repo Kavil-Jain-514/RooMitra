@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class RoomDescriptionService {
@@ -34,8 +35,31 @@ public class RoomDescriptionService {
     @Autowired
     private RoomProvidersRepository roomProvidersRepository;
 
+    // Add this validation method
+    private void validateRoomDescription(RoomDescription roomDescription) {
+        Date today = new Date();
+        if (roomDescription.getAvailabilityDate() != null &&
+                roomDescription.getAvailabilityDate().before(today)) {
+            throw new IllegalArgumentException("The availability date must be set to a future date");
+        }
+
+        // Add additional validations with descriptive messages
+        if (roomDescription.getRent() <= 0) {
+            throw new IllegalArgumentException("Rent must be greater than 0");
+        }
+
+        if (roomDescription.getSqft() <= 0) {
+            throw new IllegalArgumentException("Square footage must be greater than 0");
+        }
+
+        if (roomDescription.getRooms() <= 0) {
+            throw new IllegalArgumentException("Number of rooms must be greater than 0");
+        }
+    }
+
     // Create a new room description
     public RoomDescription createRoomDescription(RoomDescription roomDescription) {
+        validateRoomDescription(roomDescription);
         RoomDescription savedDescription = roomDescriptionRepository.save(roomDescription);
 
         // Update the provider's roomDetailsId
@@ -60,6 +84,7 @@ public class RoomDescriptionService {
 
     // Update room description
     public RoomDescription updateRoomDescription(String id, RoomDescription updatedDescription) {
+        validateRoomDescription(updatedDescription);
         return roomDescriptionRepository.findById(id)
                 .map(description -> {
                     // Copy all fields from updatedDescription to description
@@ -103,7 +128,7 @@ public class RoomDescriptionService {
 
                     return savedDescription;
                 })
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Room description not found"));
     }
 
     // Delete room description

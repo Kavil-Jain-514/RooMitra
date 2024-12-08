@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import api from "../api/axiosConfig";
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -30,7 +31,27 @@ const LoginPage = () => {
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.response?.data || "Login failed");
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            toast.error("Invalid email or password");
+            break;
+          case 404:
+            toast.error(
+              "User not found. Please check your email and user type"
+            );
+            break;
+          case 403:
+            toast.error(
+              "Your account has been disabled. Please contact support"
+            );
+            break;
+          default:
+            toast.error("Login failed. Please try again later");
+        }
+      } else {
+        toast.error("Network error. Please check your connection");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -42,6 +63,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <ToastContainer />
       {isLoading && <LoadingSpinner />}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

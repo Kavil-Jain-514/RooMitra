@@ -61,7 +61,7 @@ const RoomCard = ({ provider, isProviderView }) => {
               <div className="flex items-center">
                 <FaBed className="text-gray-400 mr-1" />
                 <span className="text-sm text-gray-600">
-                  {roomDescription.bed}
+                  {roomDescription.rooms}
                 </span>
               </div>
               <div className="flex items-center">

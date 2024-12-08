@@ -4,11 +4,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
+import PhoneNumberInput from "../components/PhoneNumberInput";
 
 const RegistrationPage = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     setError,
   } = useForm();
@@ -148,8 +150,16 @@ const RegistrationPage = () => {
               type="date"
               {...register("dateOfBirth", {
                 required: "Date of birth is required",
+                validate: (value) => {
+                  const date = new Date(value);
+                  const today = new Date();
+                  return (
+                    date <= today || "Date of birth cannot be in the future"
+                  );
+                },
               })}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              max={new Date().toISOString().split("T")[0]}
             />
             {errors.dateOfBirth && (
               <p className="text-red-500">{errors.dateOfBirth.message}</p>
@@ -157,17 +167,7 @@ const RegistrationPage = () => {
           </div>
           <div>
             <label className="block text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              {...register("phoneNumber", {
-                required: "Phone number is required",
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: "Invalid phone number",
-                },
-              })}
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
+            <PhoneNumberInput control={control} error={errors.phoneNumber} />
             {errors.phoneNumber && (
               <p className="text-red-500">{errors.phoneNumber.message}</p>
             )}

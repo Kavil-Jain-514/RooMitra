@@ -106,12 +106,19 @@ const RoomDetailsPage = () => {
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       toast.success(
-        `Room details ${isUpdateMode ? "updated" : "added"} successfully!`
+        isUpdateMode
+          ? "Room details have been successfully updated! Your changes are now live."
+          : "Room details have been successfully added! Your listing is now live."
       );
       navigate("/dashboard");
     } catch (error) {
-      toast.error(`Error ${isUpdateMode ? "updating" : "adding"} room details`);
       console.error("Error:", error);
+      const errorMessage = error.response?.data || error.message;
+      toast.error(
+        isUpdateMode
+          ? `Failed to update room details: ${errorMessage}`
+          : `Failed to add room details: ${errorMessage}`
+      );
     }
   };
 
@@ -334,8 +341,18 @@ const RoomDetailsPage = () => {
                 type="date"
                 {...register("availabilityDate", {
                   required: "Availability date is required",
+                  validate: (value) => {
+                    const selectedDate = new Date(value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Reset time to start of day for fair comparison
+                    return (
+                      selectedDate >= today ||
+                      "Availability date must be in the future"
+                    );
+                  },
                 })}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+                min={new Date().toISOString().split("T")[0]} // Set minimum date to today
               />
               {errors.availabilityDate && (
                 <span className="text-red-500 text-sm">
