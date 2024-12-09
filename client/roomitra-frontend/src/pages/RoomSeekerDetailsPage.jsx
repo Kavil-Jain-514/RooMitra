@@ -49,6 +49,9 @@ const RoomSeekerDetailsPage = () => {
           `/matches/connection-status/${user._id}/${id}`
         );
         setIsConnected(response.data.connected);
+        if (response.data.status === "PENDING") {
+          setConnectionStatus("PENDING");
+        }
       } catch (error) {
         console.error("Error checking connection status:", error);
       }

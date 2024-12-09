@@ -23,6 +23,9 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
 @Service
 public class RoomDescriptionService {
 
@@ -34,6 +37,11 @@ public class RoomDescriptionService {
 
     @Autowired
     private RoomProvidersRepository roomProvidersRepository;
+
+    @Autowired
+    private AmazonS3 amazonS3;
+
+    private String bucketName;
 
     // Add this validation method
     private void validateRoomDescription(RoomDescription roomDescription) {
@@ -155,19 +163,22 @@ public class RoomDescriptionService {
     // Add this method to handle photo uploads
     public List<String> uploadPhotos(List<MultipartFile> photos, String roomId) {
         List<String> photoUrls = new ArrayList<>();
-        String uploadDir = "uploads/rooms/" + roomId + "/";
 
-        try {
-            Files.createDirectories(Paths.get(uploadDir));
+        for (MultipartFile photo : photos) {
+            String fileName = UUID.randomUUID().toString() + "_" + photo.getOriginalFilename();
+            String s3Key = "rooms/" + roomId + "/" + fileName;
 
-            for (MultipartFile photo : photos) {
-                String fileName = UUID.randomUUID().toString() + "_" + photo.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir + fileName);
-                Files.copy(photo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                photoUrls.add("/uploads/rooms/" + roomId + "/" + fileName);
+            try {
+                // Upload to S3
+                PutObjectRequest request = new PutObjectRequest(bucketName, s3Key, photo.getInputStream(), null);
+                amazonS3.putObject(request);
+
+                // Get the S3 URL
+                String photoUrl = amazonS3.getUrl(bucketName, s3Key).toString();
+                photoUrls.add(photoUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload photo", e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Could not store photos", e);
         }
 
         return photoUrls;

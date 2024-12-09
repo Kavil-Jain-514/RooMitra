@@ -30,6 +30,7 @@ const RoomProviderDetailsPage = () => {
         ]);
         setProviderData(providerRes.data);
         setRoomDescription(roomRes.data[0]);
+        console.log(roomRes.data);
       } catch (error) {
         console.error("Error fetching details:", error);
       }
@@ -45,6 +46,9 @@ const RoomProviderDetailsPage = () => {
           `/matches/connection-status/${user._id}/${id}`
         );
         setIsConnected(response.data.connected);
+        if (response.data.status === "PENDING") {
+          setConnectionStatus("PENDING");
+        }
       } catch (error) {
         console.error("Error checking connection status:", error);
       }
@@ -110,6 +114,36 @@ const RoomProviderDetailsPage = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Room Images Section */}
+          <div className="p-6 border-b">
+            <h2 className="text-xl font-semibold mb-4">Room Images</h2>
+            {roomDescription.photoUrls &&
+            roomDescription.photoUrls.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {roomDescription.photoUrls.map((photo, index) => (
+                  <div key={index} className="relative aspect-w-16 aspect-h-9">
+                    <img
+                      src={photo}
+                      alt={`Room view ${index + 1}`}
+                      className="object-cover w-full h-full rounded-lg image-loading"
+                      onLoad={(e) => {
+                        e.target.classList.remove("image-loading");
+                      }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src =
+                          "https://via.placeholder.com/300x200?text=Image+Not+Found";
+                        e.target.classList.remove("image-loading");
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No room images available</p>
+            )}
           </div>
 
           {/* Room Details Section */}

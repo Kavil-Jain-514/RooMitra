@@ -89,8 +89,8 @@ public class MatchController {
             @PathVariable String userId1,
             @PathVariable String userId2) {
         try {
-            boolean isConnected = matchService.areUsersConnected(userId1, userId2);
-            return ResponseEntity.ok(Map.of("connected", isConnected));
+            Map<String, Object> status = matchService.getDetailedConnectionStatus(userId1, userId2);
+            return ResponseEntity.ok(status);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error checking connection status: " + e.getMessage());
         }

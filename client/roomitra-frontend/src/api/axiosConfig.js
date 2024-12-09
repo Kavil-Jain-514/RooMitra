@@ -13,6 +13,10 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
     (config) => {
+        const loadingContext = document.querySelector("#root")?.__loadingContext;
+        if (loadingContext?.startLoading) {
+            loadingContext.startLoading();
+        }
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -20,6 +24,10 @@ api.interceptors.request.use(
         return config;
     },
     (error) => {
+        const loadingContext = document.querySelector("#root")?.__loadingContext;
+        if (loadingContext?.stopLoading) {
+            loadingContext.stopLoading();
+        }
         console.error('Request error:', error);
         return Promise.reject(error);
     }
@@ -27,8 +35,18 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        const loadingContext = document.querySelector("#root")?.__loadingContext;
+        if (loadingContext?.stopLoading) {
+            loadingContext.stopLoading();
+        }
+        return response;
+    },
     (error) => {
+        const loadingContext = document.querySelector("#root")?.__loadingContext;
+        if (loadingContext?.stopLoading) {
+            loadingContext.stopLoading();
+        }
         if (error.response?.status === 401) {
             localStorage.clear();
             window.location.href = '/login';

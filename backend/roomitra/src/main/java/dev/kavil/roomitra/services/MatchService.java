@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Arrays;
 
 @Service
 public class MatchService {
@@ -56,7 +58,15 @@ public class MatchService {
     }
 
     public boolean existsByProviderAndSeeker(String providerId, String seekerId) {
-        return matchesRepository.existsByProviderIdAndSeekerId(providerId, seekerId);
+        // Check if there's any existing match (PENDING or ACCEPT) between these users
+        List<Matches> existingMatches = matchesRepository.findByProviderIdAndSeekerId(providerId, seekerId);
+        if (!existingMatches.isEmpty()) {
+            return true;
+        }
+
+        // Also check the reverse combination
+        existingMatches = matchesRepository.findByProviderIdAndSeekerId(seekerId, providerId);
+        return !existingMatches.isEmpty();
     }
 
     public List<Matches> getPendingMatchesByUserId(String userId) {
@@ -67,14 +77,14 @@ public class MatchService {
         // Filter based on requestedBy field
         List<Matches> filteredMatches = new ArrayList<>();
 
-        // For seekers: show only incoming requests
+        // For seekers: show only incoming requests from providers
         filteredMatches.addAll(seekerMatches.stream()
-                .filter(match -> match.getRequestedBy().equals(match.getProviderId()))
+                .filter(match -> !match.getRequestedBy().equals(userId))
                 .collect(Collectors.toList()));
 
-        // For providers: show only outgoing requests
+        // For providers: show only incoming requests from seekers
         filteredMatches.addAll(providerMatches.stream()
-                .filter(match -> match.getRequestedBy().equals(match.getProviderId()))
+                .filter(match -> !match.getRequestedBy().equals(userId))
                 .collect(Collectors.toList()));
 
         return filteredMatches;
@@ -91,5 +101,29 @@ public class MatchService {
         }
 
         return !matches.isEmpty();
+    }
+
+    public Map<String, Object> getDetailedConnectionStatus(String userId1, String userId2) {
+        List<Matches.MatchStatus> statuses = Arrays.asList(Matches.MatchStatus.PENDING, Matches.MatchStatus.ACCEPT);
+
+        // Check both combinations
+        List<Matches> matches = matchesRepository.findByProviderIdAndSeekerIdAndStatusIn(userId1, userId2, statuses);
+        if (matches.isEmpty()) {
+            matches = matchesRepository.findByProviderIdAndSeekerIdAndStatusIn(userId2, userId1, statuses);
+        }
+
+        if (matches.isEmpty()) {
+            return Map.of("status", "NONE", "connected", false);
+        }
+
+        Matches match = matches.get(0);
+        boolean isPending = match.getStatus() == Matches.MatchStatus.PENDING;
+        boolean isRequestedByCurrentUser = match.getRequestedBy().equals(userId1);
+
+        return Map.of(
+                "status", match.getStatus().toString(),
+                "connected", match.getStatus() == Matches.MatchStatus.ACCEPT,
+                "isPending", isPending,
+                "isRequestedByCurrentUser", isRequestedByCurrentUser);
     }
 }
