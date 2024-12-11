@@ -177,9 +177,11 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold mb-4">
               Ready to Find Your Perfect Roommate?
             </h2>
-            <button className="bg-white text-blue-600 px-6 py-3 rounded">
-              Sign Up Now
-            </button>
+            <a href="#selection">
+              <button className="bg-white text-blue-600 px-6 py-3 rounded">
+                Sign Up Now
+              </button>
+            </a>
           </section>
         </main>
       )}

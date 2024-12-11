@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import logo from "../assets/RooMitra-logo.svg";
-import { FaBell, FaUserCircle, FaSignOutAlt, FaSearch } from "react-icons/fa";
+import { FaBell, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import api from "../api/axiosConfig";
 
 const Header = ({ isDashboard, onSearch, searchPlaceholder }) => {
