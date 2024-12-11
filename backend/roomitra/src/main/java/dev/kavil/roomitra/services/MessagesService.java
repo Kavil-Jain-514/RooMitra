@@ -18,8 +18,11 @@ public class MessagesService {
     }
 
     public List<Messages> getConversation(String userId1, String userId2) {
-        return messagesRepository.findBySenderIdAndRecipientIdOrRecipientIdAndSenderIdOrderBySentAtDesc(
-                userId1, userId2, userId2, userId1);
+        // Get messages in both directions and sort by sentAt
+        List<Messages> messages = messagesRepository.findConversationBetweenUsers(userId1, userId2);
+        // Sort in ascending order (oldest to newest)
+        messages.sort((a, b) -> a.getSentAt().compareTo(b.getSentAt()));
+        return messages;
     }
 
     public void markAsRead(String messageId) {

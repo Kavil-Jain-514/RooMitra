@@ -44,34 +44,33 @@ const ConnectionRequests = () => {
 
   const handleRequest = async (requestId, status) => {
     try {
+      const request = requests.find((req) => req._id === requestId);
+      if (!request) {
+        toast.error("Request not found");
+        return;
+      }
+
       await api.put(`/matches/${requestId}?status=${status}`, {
         message: `Request ${status.toLowerCase()}ed`,
       });
 
-      const request = requests.find((req) => req._id === requestId);
       const otherUserId =
-        user.userType === "RoomSeeker"
-          ? request?.providerId
-          : request?.seekerId;
+        user.userType === "RoomSeeker" ? request.providerId : request.seekerId;
 
-      if (request) {
-        await api.post("/notifications", {
-          userId: otherUserId,
-          type: "CONNECTION_RESPONSE",
-          content: `${user.firstName} ${
-            user.lastName
-          } has ${status.toLowerCase()} your connection request`,
-          data: {
-            matchId: requestId,
-            status,
-          },
-        });
+      await api.post("/notifications", {
+        userId: otherUserId,
+        type: "CONNECTION_RESPONSE",
+        content: `${user.firstName} ${
+          user.lastName
+        } has ${status.toLowerCase()} your connection request`,
+        data: {
+          matchId: requestId,
+          status,
+        },
+      });
 
-        toast.success(`Request ${status.toLowerCase()}`);
-        fetchRequests();
-      } else {
-        toast.error("Request not found");
-      }
+      toast.success(`Request ${status.toLowerCase()}`);
+      fetchRequests();
     } catch (error) {
       console.error("Error handling request:", error);
       toast.error("Failed to process request");

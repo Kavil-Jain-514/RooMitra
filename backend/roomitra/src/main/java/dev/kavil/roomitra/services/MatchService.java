@@ -21,6 +21,10 @@ public class MatchService {
             throw new RuntimeException("A connection already exists between these users");
         }
 
+        if (match.getRequestedBy() == null) {
+            throw new RuntimeException("requestedBy field cannot be null");
+        }
+
         match.setCreatedAt(new Date());
         match.setUpdatedAt(new Date());
         match.setLastInteractionAt(new Date());
@@ -79,12 +83,20 @@ public class MatchService {
 
         // For seekers: show only incoming requests from providers
         filteredMatches.addAll(seekerMatches.stream()
-                .filter(match -> !match.getRequestedBy().equals(userId))
+                .filter(match -> {
+                    String requestedBy = match.getRequestedBy();
+                    // If requestedBy is null, assume it's an incoming request
+                    return requestedBy == null || !requestedBy.equals(userId);
+                })
                 .collect(Collectors.toList()));
 
         // For providers: show only incoming requests from seekers
         filteredMatches.addAll(providerMatches.stream()
-                .filter(match -> !match.getRequestedBy().equals(userId))
+                .filter(match -> {
+                    String requestedBy = match.getRequestedBy();
+                    // If requestedBy is null, assume it's an incoming request
+                    return requestedBy == null || !requestedBy.equals(userId);
+                })
                 .collect(Collectors.toList()));
 
         return filteredMatches;
