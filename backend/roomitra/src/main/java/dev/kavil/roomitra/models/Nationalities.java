@@ -16,5 +16,5 @@ public class Nationalities {
     @Id
     private String _id;
     @Field("nationality_name")
-    private String nationalityName; // Name of the nationality
+    private String nationalityName;
 }

@@ -24,13 +24,19 @@ const RoomProviderDetailsPage = () => {
   useEffect(() => {
     const fetchProviderDetails = async () => {
       try {
-        const [providerRes, roomRes] = await Promise.all([
-          api.get(`/users/details/roomProvider/${id}`),
-          api.get(`/room-description/provider/${id}`),
-        ]);
-        setProviderData(providerRes.data);
+        const [providerRes, roomRes, nationalityResponse, occupationResponse] =
+          await Promise.all([
+            api.get(`/users/details/roomProvider/${id}`),
+            api.get(`/room-description/provider/${id}`),
+            api.get(`/nationalities/${providerData.data.nationalityId}`),
+            api.get(`/occupations/${providerData.data.occupationId}`),
+          ]);
+        setProviderData({
+          ...providerRes.data,
+          nationalityName: nationalityResponse.data.nationalityName,
+          occupationName: occupationResponse.data.occupationName,
+        });
         setRoomDescription(roomRes.data[0]);
-        console.log(roomRes.data);
       } catch (error) {
         console.error("Error fetching details:", error);
       }

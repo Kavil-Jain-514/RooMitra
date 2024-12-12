@@ -25,7 +25,6 @@ const UserDetailsPage = () => {
   const fetchUserDetails = async () => {
     try {
       const userData = JSON.parse(localStorage.getItem("user"));
-      console.log(userData);
       const userType = userData.userType.toLowerCase();
       const response = await api.get(
         `/users/details/${userType}/${userData._id}`

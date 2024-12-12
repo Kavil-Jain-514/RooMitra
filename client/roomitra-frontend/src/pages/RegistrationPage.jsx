@@ -195,7 +195,7 @@ const RegistrationPage = () => {
             >
               <option value="">Select your nationality</option>
               {nationalities.map((nat) => (
-                <option key={nat.id} value={nat.id}>
+                <option key={nat._id} value={nat._id}>
                   {nat.nationalityName}
                 </option>
               ))}
@@ -214,7 +214,7 @@ const RegistrationPage = () => {
             >
               <option value="">Select your occupation</option>
               {occupations.map((occ) => (
-                <option key={occ.id} value={occ.id}>
+                <option key={occ._id} value={occ._id}>
                   {occ.occupationName}
                 </option>
               ))}

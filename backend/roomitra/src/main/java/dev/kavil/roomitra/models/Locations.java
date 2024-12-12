@@ -14,11 +14,5 @@ import lombok.NoArgsConstructor;
 public class Locations {
     @Id
     private String _id;
-    private String streetName;
-    private String apartmentNumber;
     private String city;
-    private String state;
-    private String zipcode;
-    private double latitude;
-    private double longitude;
 }

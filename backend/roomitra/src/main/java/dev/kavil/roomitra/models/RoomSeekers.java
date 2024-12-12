@@ -40,7 +40,6 @@ public class RoomSeekers {
 
     private UserType userType;
     private List<String> preferredLocationIds;
-    private float minimumRent;
     private String preferencesId;
     @CreatedDate
     private Date createdAt;
