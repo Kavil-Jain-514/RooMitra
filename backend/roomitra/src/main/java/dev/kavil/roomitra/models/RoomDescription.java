@@ -29,7 +29,6 @@ public class RoomDescription {
     private int sqft;
     private int rooms;
     private int bath;
-    private int bed;
     private int floor;
     private int rent;
 

@@ -8,4 +8,6 @@ import dev.kavil.roomitra.models.ProviderPreferences;
 @Repository
 public interface ProviderPreferencesRepository extends MongoRepository<ProviderPreferences, String> {
     void deleteByUserId(String userId);
+
+    ProviderPreferences findByUserId(String userId);
 }

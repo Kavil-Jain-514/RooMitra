@@ -8,4 +8,6 @@ import dev.kavil.roomitra.models.SeekerPreferences;
 @Repository
 public interface SeekerPreferencesRepository extends MongoRepository<SeekerPreferences, String> {
     void deleteByUserId(String userId);
+
+    SeekerPreferences findByUserId(String userId);
 }

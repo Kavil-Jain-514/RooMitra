@@ -100,7 +100,6 @@ public class RoomDescriptionService {
                     description.setSqft(updatedDescription.getSqft());
                     description.setRooms(updatedDescription.getRooms());
                     description.setBath(updatedDescription.getBath());
-                    description.setBed(updatedDescription.getBed());
                     description.setFloor(updatedDescription.getFloor());
                     description.setStreetName(updatedDescription.getStreetName());
                     description.setApartmentNumber(updatedDescription.getApartmentNumber());

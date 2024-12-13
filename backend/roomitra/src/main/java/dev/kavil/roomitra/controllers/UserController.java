@@ -187,4 +187,23 @@ public class UserController {
         }
     }
 
+    // @GetMapping("/providers-with-compatibility/{seekerId}")
+    // public ResponseEntity<?> getProvidersWithCompatibility(@PathVariable String seekerId) {
+    //     try {
+    //         List<Map<String, Object>> providersWithScores = userService.getProvidersWithCompatibilityScores(seekerId);
+    //         return ResponseEntity.ok(providersWithScores);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(500).body("Error fetching providers: " + e.getMessage());
+    //     }
+    // }
+
+    // @GetMapping("/seekers-with-compatibility/{providerId}")
+    // public ResponseEntity<?> getSeekersWithCompatibility(@PathVariable String providerId) {
+    //     try {
+    //         List<Map<String, Object>> seekersWithScores = userService.getSeekersWithCompatibilityScores(providerId);
+    //         return ResponseEntity.ok(seekersWithScores);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(500).body("Error fetching seekers: " + e.getMessage());
+    //     }
+    // }
 }
