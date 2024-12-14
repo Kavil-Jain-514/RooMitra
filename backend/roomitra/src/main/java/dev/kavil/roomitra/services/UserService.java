@@ -37,8 +37,8 @@ public class UserService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private CompatibilityService compatibilityService;
+    // @Autowired
+    // private CompatibilityService compatibilityService;
 
     @Autowired
     private SeekerPreferencesRepository seekerPreferencesRepository;
@@ -187,72 +187,76 @@ public class UserService {
         return result;
     }
 
-    // public List<Map<String, Object>> getProvidersWithCompatibilityScores(String seekerId) {
-    //     SeekerPreferences seekerPrefs = seekerPreferencesRepository.findByUserId(seekerId);
-    //     List<RoomProviders> providers = roomProvidersRepository.findAll();
+    // public List<Map<String, Object>> getProvidersWithCompatibilityScores(String
+    // seekerId) {
+    // SeekerPreferences seekerPrefs =
+    // seekerPreferencesRepository.findByUserId(seekerId);
+    // List<RoomProviders> providers = roomProvidersRepository.findAll();
 
-    //     return providers.stream()
-    //             .map(provider -> {
-    //                 Map<String, Object> result = new HashMap<>();
-    //                 result.put("provider", provider);
+    // return providers.stream()
+    // .map(provider -> {
+    // Map<String, Object> result = new HashMap<>();
+    // result.put("provider", provider);
 
-    //                 // Only calculate compatibility if both preferences exist
-    //                 if (seekerPrefs != null) {
-    //                     ProviderPreferences providerPrefs = providerPreferencesRepository
-    //                             .findByUserId(provider.get_id());
+    // // Only calculate compatibility if both preferences exist
+    // if (seekerPrefs != null) {
+    // ProviderPreferences providerPrefs = providerPreferencesRepository
+    // .findByUserId(provider.get_id());
 
-    //                     if (providerPrefs != null) {
-    //                         double compatibilityScore = compatibilityService
-    //                                 .calculateCompatibilityScore(seekerPrefs, providerPrefs);
-    //                         result.put("compatibilityScore", compatibilityScore);
-    //                     }
-    //                 }
-    //                 return result;
-    //             })
-    //             .sorted((a, b) -> {
-    //                 // Sort by compatibility score if available, otherwise keep original order
-    //                 Double scoreA = (Double) a.get("compatibilityScore");
-    //                 Double scoreB = (Double) b.get("compatibilityScore");
-    //                 if (scoreA != null && scoreB != null) {
-    //                     return Double.compare(scoreB, scoreA);
-    //                 }
-    //                 return 0;
-    //             })
-    //             .collect(Collectors.toList());
+    // if (providerPrefs != null) {
+    // double compatibilityScore = compatibilityService
+    // .calculateCompatibilityScore(seekerPrefs, providerPrefs);
+    // result.put("compatibilityScore", compatibilityScore);
+    // }
+    // }
+    // return result;
+    // })
+    // .sorted((a, b) -> {
+    // // Sort by compatibility score if available, otherwise keep original order
+    // Double scoreA = (Double) a.get("compatibilityScore");
+    // Double scoreB = (Double) b.get("compatibilityScore");
+    // if (scoreA != null && scoreB != null) {
+    // return Double.compare(scoreB, scoreA);
+    // }
+    // return 0;
+    // })
+    // .collect(Collectors.toList());
     // }
 
-    // public List<Map<String, Object>> getSeekersWithCompatibilityScores(String providerId) {
-    //     ProviderPreferences providerPrefs = providerPreferencesRepository.findByUserId(providerId);
-    //     List<RoomSeekers> seekers = roomSeekersRepository.findAll();
+    // public List<Map<String, Object>> getSeekersWithCompatibilityScores(String
+    // providerId) {
+    // ProviderPreferences providerPrefs =
+    // providerPreferencesRepository.findByUserId(providerId);
+    // List<RoomSeekers> seekers = roomSeekersRepository.findAll();
 
-    //     return seekers.stream()
-    //             .map(seeker -> {
-    //                 Map<String, Object> result = new HashMap<>();
-    //                 result.put("seeker", seeker);
+    // return seekers.stream()
+    // .map(seeker -> {
+    // Map<String, Object> result = new HashMap<>();
+    // result.put("seeker", seeker);
 
-    //                 // Only calculate compatibility if both preferences exist
-    //                 if (providerPrefs != null) {
-    //                     SeekerPreferences seekerPrefs = seekerPreferencesRepository
-    //                             .findByUserId(seeker.get_id());
+    // // Only calculate compatibility if both preferences exist
+    // if (providerPrefs != null) {
+    // SeekerPreferences seekerPrefs = seekerPreferencesRepository
+    // .findByUserId(seeker.get_id());
 
-    //                     if (seekerPrefs != null) {
-    //                         double compatibilityScore = compatibilityService
-    //                                 .calculateCompatibilityScore(seekerPrefs, providerPrefs);
-    //                         result.put("compatibilityScore", compatibilityScore);
-    //                     }
-    //                 }
-    //                 return result;
-    //             })
-    //             .sorted((a, b) -> {
-    //                 // Sort by compatibility score if available, otherwise keep original order
-    //                 Double scoreA = (Double) a.get("compatibilityScore");
-    //                 Double scoreB = (Double) b.get("compatibilityScore");
-    //                 if (scoreA != null && scoreB != null) {
-    //                     return Double.compare(scoreB, scoreA);
-    //                 }
-    //                 return 0;
-    //             })
-    //             .collect(Collectors.toList());
+    // if (seekerPrefs != null) {
+    // double compatibilityScore = compatibilityService
+    // .calculateCompatibilityScore(seekerPrefs, providerPrefs);
+    // result.put("compatibilityScore", compatibilityScore);
+    // }
+    // }
+    // return result;
+    // })
+    // .sorted((a, b) -> {
+    // // Sort by compatibility score if available, otherwise keep original order
+    // Double scoreA = (Double) a.get("compatibilityScore");
+    // Double scoreB = (Double) b.get("compatibilityScore");
+    // if (scoreA != null && scoreB != null) {
+    // return Double.compare(scoreB, scoreA);
+    // }
+    // return 0;
+    // })
+    // .collect(Collectors.toList());
     // }
 
 }

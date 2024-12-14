@@ -35,14 +35,14 @@ const RoomSeekerDetailsPage = () => {
         const [seekerResponse, nationalityResponse, occupationResponse] =
           await Promise.all([
             api.get(`/users/details/roomSeeker/${id}`),
-            api.get(`/nationalities/${seekerData.nationalityId}`),
-            api.get(`/occupations/${seekerData.occupationId}`),
+            // api.get(`/nationalities/${seekerData.nationalityId}`),
+            // api.get(`/occupations/${seekerData.occupationId}`),
           ]);
 
         setSeekerData({
           ...seekerResponse.data,
-          nationalityName: nationalityResponse.data.nationalityName,
-          occupationName: occupationResponse.data.occupationName,
+          // nationalityName: nationalityResponse.data.nationalityName,
+          // occupationName: occupationResponse.data.occupationName,
         });
       } catch (error) {
         console.error("Error fetching seeker details:", error);
