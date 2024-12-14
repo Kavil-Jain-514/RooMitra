@@ -37,4 +37,9 @@ public class NationalityController {
     public List<Occupations> getAllOccupations() {
         return occupationsRepository.findAll();
     }
+
+    @GetMapping("/occupations/{id}")
+    public Occupations getOccupations(@PathVariable String id) {
+        return occupationsRepository.findById(id).orElse(null);
+    }
 }

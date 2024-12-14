@@ -28,13 +28,13 @@ const RoomProviderDetailsPage = () => {
           await Promise.all([
             api.get(`/users/details/roomProvider/${id}`),
             api.get(`/room-description/provider/${id}`),
-            // api.get(`/nationalities/${providerData.data.nationalityId}`),
-            // api.get(`/occupations/${providerData.data.occupationId}`),
+            api.get(`/nationalities/${providerData.data.nationalityId}`),
+            api.get(`/occupations/${providerData.data.occupationId}`),
           ]);
         setProviderData({
           ...providerRes.data,
-          // nationalityName: nationalityResponse.data.nationalityName,
-          // occupationName: occupationResponse.data.occupationName,
+          nationalityName: nationalityResponse.data.nationalityName,
+          occupationName: occupationResponse.data.occupationName,
         });
         setRoomDescription(roomRes.data[0]);
       } catch (error) {

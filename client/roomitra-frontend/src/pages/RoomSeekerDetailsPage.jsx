@@ -32,17 +32,32 @@ const RoomSeekerDetailsPage = () => {
   useEffect(() => {
     const fetchSeekerDetails = async () => {
       try {
-        const [seekerResponse, nationalityResponse, occupationResponse] =
-          await Promise.all([
-            api.get(`/users/details/roomSeeker/${id}`),
-            // api.get(`/nationalities/${seekerData.nationalityId}`),
-            // api.get(`/occupations/${seekerData.occupationId}`),
-          ]);
+        // First, get the seeker details
+        const seekerResponse = await api.get(`/users/details/roomSeeker/${id}`);
+        const seekerData = seekerResponse.data;
+
+        // Only fetch nationality and occupation if IDs exist
+        let nationalityName = null;
+        let occupationName = null;
+
+        if (seekerData.nationalityId) {
+          const nationalityResponse = await api.get(
+            `/nationalities/${seekerData.nationalityId}`
+          );
+          nationalityName = nationalityResponse.data.nationalityName;
+        }
+
+        if (seekerData.occupationId) {
+          const occupationResponse = await api.get(
+            `/occupations/${seekerData.occupationId}`
+          );
+          occupationName = occupationResponse.data.occupationName;
+        }
 
         setSeekerData({
-          ...seekerResponse.data,
-          // nationalityName: nationalityResponse.data.nationalityName,
-          // occupationName: occupationResponse.data.occupationName,
+          ...seekerData,
+          nationalityName,
+          occupationName,
         });
       } catch (error) {
         console.error("Error fetching seeker details:", error);
@@ -139,22 +154,24 @@ const RoomSeekerDetailsPage = () => {
           {/* Details Section */}
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {seekerData.occupationId && (
+              {seekerData.occupationId && seekerData.occupationName && (
                 <div className="flex items-center">
                   <FaBriefcase className="text-gray-400 mr-2" />
                   <div>
                     <span className="text-sm text-gray-500">Occupation</span>
-                    <p className="text-gray-700">{seekerData.occupationId}</p>
+                    <p className="text-gray-700">{seekerData.occupationName}</p>
                   </div>
                 </div>
               )}
 
-              {seekerData.nationalityId && (
+              {seekerData.nationalityId && seekerData.nationalityName && (
                 <div className="flex items-center">
                   <FaGlobe className="text-gray-400 mr-2" />
                   <div>
                     <span className="text-sm text-gray-500">Nationality</span>
-                    <p className="text-gray-700">{seekerData.nationalityId}</p>
+                    <p className="text-gray-700">
+                      {seekerData.nationalityName}
+                    </p>
                   </div>
                 </div>
               )}
