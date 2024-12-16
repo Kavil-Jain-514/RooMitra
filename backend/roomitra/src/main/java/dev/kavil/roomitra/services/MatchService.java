@@ -3,6 +3,8 @@ package dev.kavil.roomitra.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import dev.kavil.roomitra.models.Matches;
+import dev.kavil.roomitra.models.ProviderPreferences;
+import dev.kavil.roomitra.models.SeekerPreferences;
 import dev.kavil.roomitra.repository.MatchesRepository;
 import java.util.Date;
 import java.util.List;
@@ -10,11 +12,18 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.HashMap;
 
 @Service
 public class MatchService {
     @Autowired
     private MatchesRepository matchesRepository;
+
+    @Autowired
+    private CompatibilityService compatibilityService;
+
+    @Autowired
+    private PreferencesService preferencesService;
 
     public Matches createMatch(Matches match) {
         if (existsByProviderAndSeeker(match.getProviderId(), match.getSeekerId())) {
@@ -137,5 +146,19 @@ public class MatchService {
                 "connected", match.getStatus() == Matches.MatchStatus.ACCEPT,
                 "isPending", isPending,
                 "isRequestedByCurrentUser", isRequestedByCurrentUser);
+    }
+
+    public Map<String, Object> getDetailedMatchInfo(Matches match) {
+        Map<String, Object> matchInfo = new HashMap<>();
+        matchInfo.put("match", match);
+
+        if (match.getStatus() == Matches.MatchStatus.ACCEPT) {
+            SeekerPreferences seekerPrefs = preferencesService.getSeekerPreferences(match.getSeekerId());
+            ProviderPreferences providerPrefs = preferencesService.getProviderPreferences(match.getProviderId());
+            double compatibilityScore = compatibilityService.calculateCompatibilityScore(seekerPrefs, providerPrefs);
+            matchInfo.put("compatibilityScore", compatibilityScore);
+        }
+
+        return matchInfo;
     }
 }

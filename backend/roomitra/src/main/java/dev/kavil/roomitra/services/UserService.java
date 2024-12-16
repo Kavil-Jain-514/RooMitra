@@ -259,4 +259,16 @@ public class UserService {
     // .collect(Collectors.toList());
     // }
 
+    public String getUserType(String userId) {
+        // Check if user is a seeker
+        if (roomSeekersRepository.findById(userId).isPresent()) {
+            return "RoomSeeker";
+        }
+        // Check if user is a provider
+        if (roomProvidersRepository.findById(userId).isPresent()) {
+            return "RoomProvider";
+        }
+        throw new RuntimeException("User not found or invalid user type");
+    }
+
 }

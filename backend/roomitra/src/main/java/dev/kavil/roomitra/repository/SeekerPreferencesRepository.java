@@ -5,9 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import dev.kavil.roomitra.models.SeekerPreferences;
 
+import java.util.Optional;
+
 @Repository
 public interface SeekerPreferencesRepository extends MongoRepository<SeekerPreferences, String> {
-    void deleteByUserId(String userId);
-
-    SeekerPreferences findByUserId(String userId);
+    Optional<SeekerPreferences> findFirstByUserIdOrderByUpdatedAtDesc(String userId);
 }

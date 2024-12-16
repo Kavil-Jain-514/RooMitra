@@ -20,25 +20,46 @@ const RoomProviderDetailsPage = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [isConnected, setIsConnected] = useState(false);
   const navigate = useNavigate();
+  const [compatibilityScore, setCompatibilityScore] = useState(null);
 
   useEffect(() => {
     const fetchProviderDetails = async () => {
       try {
-        const [providerRes, roomRes, nationalityResponse, occupationResponse] =
-          await Promise.all([
-            api.get(`/users/details/roomProvider/${id}`),
-            api.get(`/room-description/provider/${id}`),
-            api.get(`/nationalities/${providerData.data.nationalityId}`),
-            api.get(`/occupations/${providerData.data.occupationId}`),
-          ]);
+        // First, get the provider details
+        const providerResponse = await api.get(
+          `/users/details/roomProvider/${id}`
+        );
+        const providerData = providerResponse.data;
+
+        // Get room description
+        const roomResponse = await api.get(`/room-description/provider/${id}`);
+
+        // Only fetch nationality and occupation if IDs exist
+        let nationalityName = null;
+        let occupationName = null;
+
+        if (providerData.nationalityId) {
+          const nationalityResponse = await api.get(
+            `/nationalities/${providerData.nationalityId}`
+          );
+          nationalityName = nationalityResponse.data.nationalityName;
+        }
+
+        if (providerData.occupationId) {
+          const occupationResponse = await api.get(
+            `/occupations/${providerData.occupationId}`
+          );
+          occupationName = occupationResponse.data.occupationName;
+        }
+
         setProviderData({
-          ...providerRes.data,
-          nationalityName: nationalityResponse.data.nationalityName,
-          occupationName: occupationResponse.data.occupationName,
+          ...providerData,
+          nationalityName,
+          occupationName,
         });
-        setRoomDescription(roomRes.data[0]);
+        setRoomDescription(roomResponse.data[0]);
       } catch (error) {
-        console.error("Error fetching details:", error);
+        console.error("Error fetching provider details:", error);
       }
     };
 
@@ -51,17 +72,43 @@ const RoomProviderDetailsPage = () => {
         const response = await api.get(
           `/matches/connection-status/${user._id}/${id}`
         );
-        setIsConnected(response.data.connected);
-        if (response.data.status === "PENDING") {
-          setConnectionStatus("PENDING");
+
+        // Only set connection states if we have a valid response
+        if (response.data && response.data.status !== "NONE") {
+          setIsConnected(response.data.connected);
+          if (response.data.status === "PENDING") {
+            setConnectionStatus("PENDING");
+          }
         }
       } catch (error) {
         console.error("Error checking connection status:", error);
       }
     };
 
+    const fetchCompatibilityScore = async () => {
+      try {
+        const scoreResponse = await api.get(
+          `/compatibility-score/${id}/${user._id}`
+        );
+        setCompatibilityScore(scoreResponse.data.compatibilityScore);
+      } catch (error) {
+        if (error.response?.status === 404) {
+          setCompatibilityScore({
+            error: true,
+            message: error.response.data.message,
+          });
+        } else {
+          toast.error("Error fetching compatibility score");
+        }
+      }
+    };
+
     checkConnectionStatus();
-  }, [id, user._id]);
+    // Fetch compatibility score regardless of connection status
+    if (user.userType === "RoomSeeker") {
+      fetchCompatibilityScore();
+    }
+  }, [id, user._id, user.userType]);
 
   const handleConnect = async () => {
     try {
@@ -246,6 +293,50 @@ const RoomProviderDetailsPage = () => {
             </button>
           ))}
       </div>
+      {user.userType === "RoomSeeker" && compatibilityScore !== null && (
+        <div className="mt-4 p-4 bg-white rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2">Compatibility Score</h3>
+          {typeof compatibilityScore === "object" &&
+          compatibilityScore.error ? (
+            <div className="text-yellow-600">{compatibilityScore.message}</div>
+          ) : (
+            <>
+              <div className="flex items-center">
+                <div className="text-2xl font-bold mr-2">
+                  {Number(compatibilityScore).toFixed(1)}%
+                </div>
+                <div
+                  className={`text-sm ${
+                    compatibilityScore >= 75
+                      ? "text-green-600"
+                      : compatibilityScore >= 50
+                      ? "text-yellow-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {compatibilityScore >= 75
+                    ? "High Match"
+                    : compatibilityScore >= 50
+                    ? "Moderate Match"
+                    : "Low Match"}
+                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div
+                  className={`h-2.5 rounded-full ${
+                    compatibilityScore >= 75
+                      ? "bg-green-600"
+                      : compatibilityScore >= 50
+                      ? "bg-yellow-600"
+                      : "bg-red-600"
+                  }`}
+                  style={{ width: `${compatibilityScore}%` }}
+                ></div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
       <Footer />
     </div>
   );

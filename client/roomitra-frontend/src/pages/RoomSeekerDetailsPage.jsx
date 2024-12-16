@@ -28,6 +28,7 @@ const RoomSeekerDetailsPage = () => {
   const [isConnected, setIsConnected] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+  const [compatibilityScore, setCompatibilityScore] = useState(null);
 
   useEffect(() => {
     const fetchSeekerDetails = async () => {
@@ -73,17 +74,43 @@ const RoomSeekerDetailsPage = () => {
         const response = await api.get(
           `/matches/connection-status/${user._id}/${id}`
         );
-        setIsConnected(response.data.connected);
-        if (response.data.status === "PENDING") {
-          setConnectionStatus("PENDING");
+
+        // Only set connection states if we have a valid response
+        if (response.data && response.data.status !== "NONE") {
+          setIsConnected(response.data.connected);
+          if (response.data.status === "PENDING") {
+            setConnectionStatus("PENDING");
+          }
         }
       } catch (error) {
         console.error("Error checking connection status:", error);
       }
     };
 
+    const fetchCompatibilityScore = async () => {
+      try {
+        const scoreResponse = await api.get(
+          `/compatibility-score/${id}/${user._id}`
+        );
+        setCompatibilityScore(scoreResponse.data.compatibilityScore);
+      } catch (error) {
+        if (error.response?.status === 404) {
+          setCompatibilityScore({
+            error: true,
+            message: error.response.data.message,
+          });
+        } else {
+          toast.error("Error fetching compatibility score");
+        }
+      }
+    };
+
     checkConnectionStatus();
-  }, [id, user._id]);
+    // Fetch compatibility score regardless of connection status
+    if (user.userType === "RoomProvider") {
+      fetchCompatibilityScore();
+    }
+  }, [id, user._id, user.userType]);
 
   if (!seekerData) return <div>Loading...</div>;
   const handleConnect = async () => {
@@ -221,6 +248,50 @@ const RoomSeekerDetailsPage = () => {
             </button>
           ))}
       </div>
+      {user.userType === "RoomProvider" && compatibilityScore !== null && (
+        <div className="mt-4 p-4 bg-white rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2">Compatibility Score</h3>
+          {typeof compatibilityScore === "object" &&
+          compatibilityScore.error ? (
+            <div className="text-yellow-600">{compatibilityScore.message}</div>
+          ) : (
+            <>
+              <div className="flex items-center">
+                <div className="text-2xl font-bold mr-2">
+                  {Number(compatibilityScore).toFixed(1)}%
+                </div>
+                <div
+                  className={`text-sm ${
+                    compatibilityScore >= 75
+                      ? "text-green-600"
+                      : compatibilityScore >= 50
+                      ? "text-yellow-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {compatibilityScore >= 75
+                    ? "High Match"
+                    : compatibilityScore >= 50
+                    ? "Moderate Match"
+                    : "Low Match"}
+                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div
+                  className={`h-2.5 rounded-full ${
+                    compatibilityScore >= 75
+                      ? "bg-green-600"
+                      : compatibilityScore >= 50
+                      ? "bg-yellow-600"
+                      : "bg-red-600"
+                  }`}
+                  style={{ width: `${compatibilityScore}%` }}
+                ></div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
       <Footer />
     </div>
   );

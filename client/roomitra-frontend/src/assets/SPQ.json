@@ -1,0 +1,106 @@
+[
+    {
+        "question": "What type of room are you looking for?",
+        "possibleAnswers": ["Single", "Shared", "Either"]
+    },
+    {
+        "question": "What is your budget range for rent?",
+        "possibleAnswers": ["$500–$700", "$701–$900", "$901–$1200", "Above $1200"]
+    },
+    {
+        "question": "Do you prefer roommates of a specific gender?",
+        "possibleAnswers": ["No Preference", "Male", "Female", "Non-Binary"]
+    },
+    {
+        "question": "How do you study best?",
+        "possibleAnswers": ["In total silence", "With some background noise", "In a group"]
+    },
+    {
+        "question": "What time of day do you usually study?",
+        "possibleAnswers": ["Early Morning", "Mid-day", "Night"]
+    },
+    {
+        "question": "Do you have dietary preferences?",
+        "possibleAnswers": ["Vegetarian", "Non-Vegetarian", "Vegan", "Other"]
+    },
+    {
+        "question": "Do you smoke or are you okay with smokers?",
+        "possibleAnswers": ["I smoke", "I don’t smoke", "Okay with smokers", "Not okay with smokers"]
+    },
+    {
+        "question": "Are you comfortable living with pets?",
+        "possibleAnswers": ["Yes", "No"]
+    },
+    {
+        "question": "How important is cleanliness to you?",
+        "possibleAnswers": ["Not important", "Somewhat important", "Very important"]
+    },
+    {
+        "question": "What are your preferred quiet hours?",
+        "possibleAnswers": ["Morning", "Evening", "Night", "No Preference"]
+    },
+    {
+        "question": "How often do you clean your living space?",
+        "possibleAnswers": ["Daily", "Weekly", "Only when it’s dirty"]
+    },
+    {
+        "question": "How do you feel about sharing chores?",
+        "possibleAnswers": ["I’m strict about equal sharing", "I prefer a flexible approach", "I don’t mind doing more"]
+    },
+    {
+        "question": "Do you prefer to cook at home or eat out?",
+        "possibleAnswers": [
+            "I’m a culinary artist—my kitchen is my canvas.",
+            "I enjoy cooking, but only when I have time for it.",
+            "I’m a takeout connoisseur—leave the cooking to the pros!",
+            "I love experimenting with recipes, but I also appreciate a good restaurant meal.",
+            "I prefer meal prepping for the week, but I treat myself to dining out on weekends."
+        ]
+    },
+    {
+        "question": "What time do you usually go to bed?",
+        "possibleAnswers": ["Early (before 10 PM)", "Moderate (10–12 PM)", "Late (After Midnight)"]
+    },
+    {
+        "question": "How important is having your own bathroom?",
+        "possibleAnswers": [
+            "Very important—I prefer my own bathroom.",
+            "Somewhat important—I can share if necessary.",
+            "Not important—I’m fine with a shared bathroom."
+        ]
+    },
+    {
+        "question": "Are you comfortable with roommates who have different dietary preferences than yours?",
+        "possibleAnswers": [
+            "Absolutely! Variety is the spice of life—I love learning about different diets.",
+            "I’m flexible as long as we respect each other’s choices.",
+            "I’m okay with it, but I’d appreciate some ground rules for shared meals.",
+            "Not really—my diet is important to me, so I prefer someone with similar preferences."
+        ]
+    },
+    {
+        "question": "What’s your ideal weekend like?",
+        "possibleAnswers": [
+            "I’m a homebody, so I enjoy relaxing at home with a good book or movie.",
+            "I like to explore new places and try new activities.",
+            "I’m a social butterfly—I’m up for anything that involves being with friends or family.",
+            "I’m a workaholic—I’m busy with work or hobbies, and I don’t mind staying in."
+        ]
+    },
+    {
+        "question": "How often do you have friends over?",
+        "possibleAnswers": [
+            "I’m a social butterfly—I love having friends over often.",
+            "I’m okay with it, but I prefer a quieter environment.",
+            "I’m not a big fan of having friends over, so I prefer a more private space."
+        ]
+    },
+    {
+        "question": "How do you handle shared expenses?",
+        "possibleAnswers": ["I’m strict about equal sharing", "I prefer a flexible approach", "I don’t mind doing more"]
+    },
+    {
+        "question": "What’s your ideal noise level at home?",
+        "possibleAnswers": ["Quiet as a library", "Some background noise is fine", "I don’t mind a lot of noise"]
+    }
+]

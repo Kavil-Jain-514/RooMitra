@@ -1,0 +1,118 @@
+[
+    {
+        "question": "What type of tenant are you looking for?",
+        "possibleAnswers": ["Single tenant", "Couple", "Family", "No preference"]
+    },
+    {
+        "question": "Do you have a preference for the tenant’s gender?",
+        "possibleAnswers": ["No Preference", "Male", "Female", "Non-Binary"]
+    },
+    {
+        "question": "What is the minimum duration of stay you require?",
+        "possibleAnswers": ["1–3 months", "4–6 months", "6–12 months", "More than 1 year"]
+    },
+    {
+        "question": "Are you open to tenants with pets?",
+        "possibleAnswers": ["Yes", "No"]
+    },
+    {
+        "question": "What level of cleanliness do you expect from tenants?",
+        "possibleAnswers": ["Not important", "Somewhat important", "Very important"]
+    },
+    {
+        "question": "What are your preferred quiet hours?",
+        "possibleAnswers": ["Morning", "Evening", "Night", "No Preference"]
+    },
+    {
+        "question": "Are utilities included in the rent?",
+        "possibleAnswers": ["Yes", "No", "Partially"]
+    },
+    {
+        "question": "How do you feel about shared chores?",
+        "possibleAnswers": ["Strictly equal sharing", "Flexible approach", "No preference"]
+    },
+    {
+        "question": "What cooking habits do you prefer in a tenant?",
+        "possibleAnswers": [
+            "I prefer someone who rarely cooks.",
+            "I’m fine with regular cooking as long as they clean up after.",
+            "I don’t mind heavy cooking."
+        ]
+    },
+    {
+        "question": "Are you okay with tenants smoking in or near the property?",
+        "possibleAnswers": ["Yes", "No", "Only outside"]
+    },
+    {
+        "question": "What type of tenant personality would suit your living space?",
+        "possibleAnswers": [
+            "Quiet and reserved",
+            "Social and outgoing",
+            "Flexible—open to any personality"
+        ]
+    },
+    {
+        "question": "How often can tenants have visitors?",
+        "possibleAnswers": [
+            "No visitors allowed",
+            "Occasionally, with prior notice",
+            "Frequent visitors are fine"
+        ]
+    },
+    {
+        "question": "Do you allow tenants to redecorate their space?",
+        "possibleAnswers": [
+            "Yes, minor changes are fine",
+            "Only temporary decorations",
+            "No changes allowed"
+        ]
+    },
+    {
+        "question": "How flexible are you about the move-in date?",
+        "possibleAnswers": [
+            "Very flexible—any time works",
+            "Somewhat flexible—a week’s notice needed",
+            "Not flexible—specific date only"
+        ]
+    },
+    {
+        "question": "What’s your ideal noise level at home?",
+        "possibleAnswers": [
+            "Quiet as a library",
+            "Some background noise is fine",
+            "I don’t mind a lot of noise"
+        ]
+    },
+    {
+        "question": "Do you require references from previous landlords or employers?",
+        "possibleAnswers": ["Yes", "No", "Not sure yet"]
+    },
+    {
+        "question": "What’s your policy on shared spaces (e.g., living room, kitchen)?",
+        "possibleAnswers": [
+            "Open to sharing everything equally",
+            "Restricted access to certain areas",
+            "Tenants have access only to their space"
+        ]
+    },
+    {
+        "question": "What payment schedule do you prefer for rent?",
+        "possibleAnswers": ["Monthly", "Bi-weekly", "Quarterly", "Flexible"]
+    },
+    {
+        "question": "Are you comfortable with tenants from different cultural backgrounds?",
+        "possibleAnswers": [
+            "Yes, I welcome diversity",
+            "I prefer someone with a similar background",
+            "I’m open to discussion"
+        ]
+    },
+    {
+        "question": "What’s your expectation for tenant communication?",
+        "possibleAnswers": [
+            "Regular updates about issues",
+            "Contact only when necessary",
+            "No preference—flexible"
+        ]
+    }
+]

@@ -2,6 +2,7 @@ package dev.kavil.roomitra.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.kavil.roomitra.models.Matches;
 import dev.kavil.roomitra.services.MatchService;
 import dev.kavil.roomitra.services.NotificationService;
+import dev.kavil.roomitra.services.CompatibilityService;
+import dev.kavil.roomitra.services.PreferencesService;
+import dev.kavil.roomitra.models.SeekerPreferences;
+import dev.kavil.roomitra.models.ProviderPreferences;
 
 @RestController
 @RequestMapping("/api/v1/matches")
@@ -25,6 +30,10 @@ public class MatchController {
     private MatchService matchService;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private CompatibilityService compatibilityService;
+    @Autowired
+    private PreferencesService preferencesService;
 
     @PostMapping("/request")
     public ResponseEntity<?> createMatchRequest(@RequestBody Matches match) {
@@ -36,6 +45,16 @@ public class MatchController {
 
             Matches savedMatch = matchService.createMatch(match);
 
+            // Calculate compatibility score
+            SeekerPreferences seekerPrefs = preferencesService.getSeekerPreferences(match.getSeekerId());
+            ProviderPreferences providerPrefs = preferencesService.getProviderPreferences(match.getProviderId());
+            double compatibilityScore = compatibilityService.calculateCompatibilityScore(seekerPrefs, providerPrefs);
+
+            // Add score to response
+            Map<String, Object> response = new HashMap<>();
+            response.put("match", savedMatch);
+            response.put("compatibilityScore", compatibilityScore);
+
             // Create notification for the recipient
             String recipientId = match.getRequestedBy().equals(match.getSeekerId())
                     ? match.getProviderId()
@@ -44,10 +63,10 @@ public class MatchController {
             notificationService.createNotification(
                     recipientId,
                     "CONNECTION_REQUEST",
-                    "You have received a new connection request",
+                    String.format("New connection request! Compatibility Score: %.1f%%", compatibilityScore),
                     false);
 
-            return ResponseEntity.ok(savedMatch);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error creating match request: " + e.getMessage());
         }
